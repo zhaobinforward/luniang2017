@@ -1,0 +1,51 @@
+@charset 'gbk';
+
+*{word-wrap:break-word}
+*, body, div, span, ul, li, table, tbody, th, tr, td, img, a, input, select, option, p {margin:0;padding:0}
+html, body {width:100%;margin:0 auto;text-align:left;padding:0;-webkit-text-size-adjust:none;font:12px/1.5 Î¢ÈíÑÅºÚ,ËÎÌå,serif,Arial,Verdana,Geneva,Helvetica,sans-serif;color:#3f3f3f;/*background-color:#f9f9f9*/}
+textarea{resize:none}
+*,body,ul,ol,li,dl,dd,p,h1,h2,h3,h4,h5,h6,form,fieldset{margin:0;padding:0}
+table{empty-cells:show;border-collapse:collapse}
+caption,th{text-align:left;font-weight:400}
+ul li,.xl li{list-style:none}
+h1,h2,h3,h4,h5,h6{font-size:1em}
+em,cite,i{font-style:normal}
+a{color:#333;text-decoration:none}
+a:hover{text-decoration:underline}
+a img{border:none}
+label{cursor:pointer}
+img { border:none; }
+*:focus{outline:0}
+.clearfix:after {content:".";display:block;height:0;clear:both;visibility:hidden}
+.cl:after{content:".";display:block;height:0;clear:both;visibility:hidden}
+.cl{zoom:1}
+
+.fl{float:left}
+.fr{float:right}
+.rowLast{margin-right:0}
+.colLast{margin-bottom:0}
+.cutstr{vertical-align:text-bottom;word-wrap:normal;white-space:nowrap;overflow:hidden;-o-text-overflow:ellipsis;/* Opera */ text-overflow:ellipsis;/* IE, Safari (WebKit) */}
+
+#ajaxwaitid{display:none;position:absolute;right:0;top:0;z-index:1;padding:0 5px;background:#D00;color:#FFF}
+
+/* topNav */
+.topNav{background-color:#262626}
+.topNavCont{width:980px;margin:0 auto}
+.topNavUl{float:left;list-style:none;overflow:hidden}
+	.topNavUl li {font-size:12px;float:left;cursor:pointer;padding:6px 10px;color:rgb(111,111,111);font-family: Tahoma, Arial}
+.userinfo_ul{display:inline;list-style:none;overflow:hidden}
+	.userinfo_ul li {font-size:12px;float:left;padding:6px 10px;color:#ccc;font-family:Tahoma, Arial}
+	.userinfo_ul li a{color:#ccc}
+
+/* header */
+.header {height:80px;width:100%;background-color:#fff;border-bottom:1px solid #ececec}
+.header_wrap {width:1000px;margin:0 auto;padding-top:16px}
+.nav_ul {float:right;list-style:none;font-size:0;line-height:0;overflow:hidden}
+	.nav_ul li{display:inline-block;padding:0 14px;*padding:0 12px;font-size:16px;line-height:60px;color:#646262;*display:inline;*zoom:1}
+		.nav_ul li a{font-size:16px;color:#646262}
+		.nav_ul li a.current {color:#dd6525}
+
+/* footer */
+.footer{width:100%;color:#555;background-color:#2c2c2c;text-align:center}
+	.footer a{color:#555}
+.footerCont{padding:28px 0;margin:0;color:#555}
