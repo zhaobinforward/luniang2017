@@ -31,8 +31,9 @@ if(!preg_match($sPhonePattern, $iUserPhone)){
 $oLottery = new Lottery();
 $bRes = $oLottery->insertLotteryInfo($sUuid, $sUserName, $iUserPhone, $sUserAddr, $sUserEmail);
 $iErrno = 1;
+$errmsg = '不能重复提交^.^';
 if($bRes){
-    $errmsg = 'success';
+    $errmsg = '保存成功';
     $iErrno = 0;
 }
 $aRes = array(
