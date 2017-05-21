@@ -288,6 +288,7 @@ function lottery(before, after) {
 				showResult({}, true, false);
 			} else if(resp.errno == 4 || resp.errno == 3) {/*no-tryleft*/
 				showResult({}, false, true);
+				$('.tryleft-info').html('剩余次数：0次');
 			} else {/*none*/
 				var hitpos;
 				if(resp.errno == 1) {/*hits*/
