@@ -17,11 +17,12 @@ interface LotteryIf
     public function doLottery($sUuid);
 
     /*
-     * 初始化或者更新抽奖次数
-     * @param $sUuid string 用户唯一的uuid
-     * return bool  成功或者失败
-     * */
-    public function initLotteryTimes($sUuid);
+   * 更新抽奖次数，隔天重置
+   * @param $sUuid string 用户唯一的uuid
+   * @param $iType int 1代表增加抽奖机会，2使用抽奖机会
+   * return int  现有抽奖次数
+   * */
+    public function updateLotteryTimes($sUuid,$iType=1);
 
     /*
      * 提交中奖信息
@@ -37,8 +38,10 @@ interface LotteryIf
 
     /*
      * 获取中奖信息
+     * @param $iOffset int 前端偏移量
+     * return array
      * */
-    public function genRewardInfo();
+    public function genRewardInfo($iOffset);
 }
 
 class Lottery implements LotteryIf{
@@ -47,6 +50,8 @@ class Lottery implements LotteryIf{
     const UNPRIZE = 0;//未中奖
     const PRIZED_NO_USERINFO = 1;//中奖还没填中奖信息
     const PRIZED_HAS_USERINFO = 2;//中奖已填中奖信息
+    const ADD_CHANCES = 1;
+    const USE_CHANGES = 2;
 
     public static $prizeTypeArr = array(
         '1' => '网易漫画一个月VIP(10元)',
@@ -63,7 +68,7 @@ class Lottery implements LotteryIf{
         '0' => '未中奖',
         '1' => '中奖还未填写中奖信息',
         '2' => '中奖已填写中奖信息',
-        '3' => '没有抽奖机会，请分享/下载皮肤获取抽奖机会',
+        '3' => '没有抽奖机会，请分享或下载皮肤获取抽奖机会',
         '4' => '今日抽奖机会已用完，明天再来哦^.^',
     );
 
@@ -78,6 +83,11 @@ class Lottery implements LotteryIf{
         $this->_MDB = new nMysql('sogou_shoujiwap', array('charset'=>'utf8'));
     }
 
+    /*
+    * 获取抽奖机会
+    * @param $sUuid string 用户唯一的uuid
+    * return array
+    * */
     public function genLotteryTimes($sUuid){
         $sSql = "select * from luniang_2017_user where uuid='".$sUuid."' limit 1";
         $oQuery = $this->_MDB->Query($sSql);
@@ -85,24 +95,58 @@ class Lottery implements LotteryIf{
         return $aRes;
     }
 
-    public function initLotteryTimes($sUuid){
+    /*
+    * 更新抽奖次数，隔天重置
+    * @param $sUuid string 用户唯一的uuid
+    * @param $iType int 1代表增加抽奖机会，2使用抽奖机会
+    * return bool  成功或者失败
+    * */
+    public function updateLotteryTimes($sUuid, $iType=1){
         $sSql = "select * from luniang_2017_user where uuid='".$sUuid."' limit 1";
         $oQuery = $this->_MDB->Query($sSql);
         $aRes = $this->_MDB->FetchArray($oQuery);
+        $iResidueTimes = $aRes['residue_times'];
         //先检查有没有这个用户
         if(isset($aRes['residue_times'])){
-            $sSql = "update luniang_2017_user set max_times=max_times-1,residue_times=residue_times+1,update_time='".time()."' where uuid='".$sUuid."' and max_times>=1";
-        }else{
+            //隔天重置
+            if(date("Y-m-d") > date("Y-m-d",$aRes['update_time'])){
+                $sSql = "update luniang_2017_user set max_times=12,residue_times=0,update_time='".time()."' where uuid='".$sUuid."'";
+            }else{
+                if($iType == self::ADD_CHANCES){//增加抽奖机会
+                    if($aRes['max_times'] > 0){//如果还有机会可以增加
+                        $sSql = "update luniang_2017_user set max_times=max_times-1,residue_times=residue_times+1,update_time='".time()."' where uuid='".$sUuid."'";
+                    }
+                }else{//使用抽奖次数
+                    if($aRes['residue_times'] > 0){
+                        $sSql = "update luniang_2017_user set residue_times=residue_times-1,update_time='".time()."' where uuid='".$sUuid."'";
+                    }
+                }
+            }
+        }else{//新用户
             $sSql = "insert into luniang_2017_user(`uuid`,`residue_times`,`max_times`,`create_time`)values
                     ('".$sUuid."',0,12,'".time()."')";
         }
         $oQuery = $this->_MDB->Query($sSql);
         if($oQuery){
-            return true;
+            $sSql = "select residue_times from luniang_2017_user where uuid='".$sUuid."'";
+            $oQuery = $this->_MDB->Query($sSql);
+            $aRes = $this->_MDB->FetchArray($oQuery);
+            if(!empty($aRes)){
+                return $aRes['residue_times'];
+            }
         }
-        return false;
     }
 
+
+    /*
+     * */
+
+
+    /*
+    * 执行抽奖
+    * @param $sUuid string 用户唯一的uuid
+    * return array('status'=>Integer, 'message'=>String, 'data'=>String/Array);
+    * */
     public function doLottery($sUuid){
         if($this->_isRewarded($sUuid)){//该用户已经中过奖
             $sStatus = 2;
@@ -110,6 +154,7 @@ class Lottery implements LotteryIf{
         $aRes = array();
         $aData = array();
         $aLotteryTimes = $this->genLotteryTimes($sUuid);
+        $iResidueTimes = 0;
         if($aLotteryTimes['residue_times'] > 0){//有抽奖机会
             $iRand = rand(0,self::LUCK_PROBABILITY);
             switch($iRand){//中奖
@@ -121,15 +166,18 @@ class Lottery implements LotteryIf{
                 case 6:
                 case 7:
                 case 8:
-                    $sStatus = 1 ;
-                    $aPrize = $this->_genPrizeByPrizeType($iRand);
+                    if($sStatus != 2){
+                        $aPrize = $this->_genPrizeByPrizeType($iRand);
+                    }
                     break;
                 default:
                     $sStatus = 0;
                     break;
             }
+            $iResidueTimes = $this->updateLotteryTimes($sUuid, self::USE_CHANGES);
             if(!empty($aPrize)){
-                $sSql = "update luniang_2017_prize set uid='".$sUuid."',status='".$sStatus."',lottery_time='".time()."' where id=".$aPrize[''];
+                $sStatus = 1 ;
+                $sSql = "update luniang_2017_prize set uid='".$sUuid."',status='1',lottery_time='".time()."' where id=".$aPrize['id'];
                 $aData['prize_type'] = $iRand;
                 $aData['prize_name'] = $aPrize['prize_name'];
                 $this->_MDB->Query($sSql);
@@ -141,25 +189,90 @@ class Lottery implements LotteryIf{
                 $sStatus = 4;
             }
         }
-        $aRes['status'] = $sStatus;
-        $aRes['message'] = self::$prizeStatusMessage[$sStatus];
+        $aData['residue_times'] = $iResidueTimes;
+        $aRes['errno'] = $sStatus;
+        $aRes['errmsg'] = self::$prizeStatusMessage[$sStatus];
         $aRes['data'] = $aData;
         return $aRes;
     }
 
+
+    /*
+    * 提交中奖信息
+    * @param $sUuid  string  用户唯一的uuid
+    * @param $sName  String 中奖用户名字
+    * @param $iPhone int    中奖用户手机号
+    * @param $sAddr  String 中奖用户地址
+    * @param $sEmail String 中奖用户邮箱
+    * return bool
+    * */
     public function insertLotteryInfo($sUuid, $sName, $iPhone, $sAddr, $sEmail){
-        $sSql = "update luniang_2017_user set user_phone='".$iPhone."',user_name='".$sName."',user_email='".$sEmail."',user_addr='".$sAddr."' where uuid='".$sUuid."'";
-        if($this->_MDB->Query($sSql)){
-            $sSql = "update luniang_2017_prize set status='".self::PRIZED_HAS_USERINFO."' where uuid='".$sUuid."'";
+        $sSql = "select * from luniang_2017_prize where uuid='".$sUuid."' and status='1'";
+        $oQuery = $this->_MDB->Query($sSql);
+        $aRes = $this->_MDB->FetchAll($oQuery);
+        if(!empty($aRes['uuid'])){//先确认是否真正中奖
+            $sSql = "update luniang_2017_user set user_phone='".$iPhone."',user_name='".$sName."',user_email='".$sEmail."',user_addr='".$sAddr."' where uuid='".$sUuid."'";
             if($this->_MDB->Query($sSql)){
-                return true;
+                $sSql = "update luniang_2017_prize set status='".self::PRIZED_HAS_USERINFO."' where uuid='".$sUuid."'";
+                if($this->_MDB->Query($sSql)){
+                    return true;
+                }
             }
         }
+
         return false;
     }
 
-    public function genRewardInfo(){
+    /*
+     * 获取中奖信息
+     * @param $iOffset int 前端偏移量
+     * return array
+    * */
+    public function genRewardInfo($iOffset=0){
+        $sSql = "select * from luniang_2017_prize where status='".self::PRIZED_HAS_USERINFO."' order by lottery_time desc limit $iOffset";
+        $oQuery = $this->_MDB->Query($sSql);
+        $aPrizes = $this->_MDB->FetchArrays($oQuery);
+        $sUuids = '(';
+        foreach($aPrizes as $k=>$v){
+            $sUuids .= $v['uid'].',';
+        }
+        $sUuids = trim($sUuids,',').")";
+        $sSql = "select * from luniang_2017_user where uid in ".$sUuids;
+        $oQuery = $this->_MDB->Query($sSql);
+        $aUidinfo = $this->_MDB->FetchArrays($oQuery);
+        $aUidArr = array();
+        foreach($aUidinfo as $k=>$v){
+            $aUidArr[$v['uid']] = $v;
+        }
 
+        $aRes = array();
+        foreach($aPrizes as $k=>$v){
+            $aRes[]['user_name'] = $aUidArr[$v['uid']]['user_name'];
+            $aRes[]['user_phone'] = $aUidArr[$v['uid']]['user_phone'];
+            $aRes[]['prize_name'] = $v['user_phone'];
+        }
+        $aRes = $this->hiddenSecret($aRes);
+        return $aRes;
+
+    }
+
+
+    /*
+     * 隐藏用户信息
+     * @param $aUserInfo array 中奖用户列表
+     * return array
+     * */
+    private function hiddenSecret($aUserInfo){
+        if(is_array($aUserInfo)){
+            $sGrep = '/(\d{3})(\d{4})(\d{4})/';
+            foreach($aUserInfo as $k=>&$v){
+                $v['user_name'] = mb_substr($v['user_name'],0,1,'utf-8')."**";
+                $v['user_phone'] = preg_replace($sGrep, "$1****$3",$v['user_phone']);
+            }
+        }else{
+            $aUserInfo = array();
+        }
+        return $aUserInfo;
     }
 
 
@@ -170,7 +283,7 @@ class Lottery implements LotteryIf{
      * */
     private function _genPrizeByPrizeType($iType){
         $sSql = "select * from luniang_2017_prize where prize_type='".$iType."' and status='".self::UNPRIZE.
-            "' and prize_date='".date("Y-m-d H:i:s")."' limit 1";
+            "' and prize_date='".date("Ymd")."' limit 1";
         $oQuery = $this->_MDB->Query($sSql);
         $aRes = $this->_MDB->FetchAll($oQuery);
         if(isset($aRes['id'])){
@@ -189,7 +302,7 @@ class Lottery implements LotteryIf{
         $oQuery = $this->_MDB->Query($sSql);
         $aRes = $this->_MDB->FetchArray($oQuery);
         if(isset($aRes['uid'])){
-            $sSql = "select count(*) as num from luniang_2017_prize where uid='".$aRes['uid']."' and status='".self::PRIZED_HAS_USERINFO."'";
+            $sSql = "select count(*) as num from luniang_2017_prize where uid='".$aRes['uid']."' and status!='0'";
             $oQuery = $this->_MDB->Query($sSql);
             $aRes = $this->_MDB->FetchArray($oQuery);
             if($aRes['num'] == 1){
@@ -199,6 +312,8 @@ class Lottery implements LotteryIf{
             return false;
         }
     }
+
+
 
 
 }

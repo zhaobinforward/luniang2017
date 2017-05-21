@@ -19,9 +19,6 @@ define('IN_APP', !0);//
 define('INTERFACE_KEY', 'UICHINA2016!@#');
 define('PHP7',substr(PHP_VERSION,0,1)==7 ? TRUE : FALSE );
 
-
-
-
 date_default_timezone_set('PRC');
 if(PHP_VERSION < '5.3.0'){
 	set_magic_quotes_runtime(0);//later 5.3.0, discard
@@ -44,6 +41,7 @@ define('R_TODY_OFFSET', TIMESTAMP-R_TODY_START);//当前时间戳与今日开始
 
 //require R_ROOT.'/include/inc.constants.php';
 require R_ROOT.'/include/func.common.php';
+require R_ROOT.'/include/functions.php';
 if(PHP7){
 	include R_ROOT.'/include/class.mysql7.php';
 }else{
@@ -51,8 +49,14 @@ if(PHP7){
 
 }
 
+//初始化用户信息
+$uuid = gen_uuid();
+require_once(R_ROOT.'/include/class.user.php');
+$user = new user();
+$user->initUuid($uuid);
+
 global $_G;
-$_G['uid'] = 0;
+$_G['uid'] = $uuid;
 $_G['nickname'] = '';
 $_G['user'] = array();
 $_G['ips'] = get_onlineip();

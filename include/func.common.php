@@ -1,5 +1,24 @@
 <?php
 
+function check_input($value)
+{
+// 去除斜杠
+	if (get_magic_quotes_gpc())
+	{
+		$value = stripslashes($value);
+	}
+// 如果不是数字则加引号
+	if (!is_numeric($value))
+	{
+		if(PHP7){
+			$value = "'" . mysqli_real_escape_string($value) . "'";
+		}else{
+			$value = "'" . mysql_real_escape_string($value) . "'";
+		}
+	}
+	return $value;
+}
+
 /**	获取$_GET,$_POST,$_COOKIE变量
  *	@param $ket String/Integer 键名
  *	@param $type String 获取的类型 缺省'GP'

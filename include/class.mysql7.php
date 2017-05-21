@@ -31,7 +31,7 @@ class nMysql {
 	 *	@param $args Array 额外参数(键值对, 键名为参数名, 键值为参数值)
 	 *	@teturn Array
 	 */
-	function nMysql()
+	public function __construct()
 	{
 		$args = func_num_args();
 		$argv = func_get_args();
@@ -39,7 +39,7 @@ class nMysql {
 		$db = $argv[0];
 		$opt = isset($argv[1]) ? $argv[1]: array(); 
 		$charset = isset($opt['charset'])? $opt['charset']: 'utf8';  // 默认为utf8
-		
+
 		if(!PRODUCT_MODEL) {
 			$this->m_name     = 'sogou_shoujiwap';
 			$this->m_host     = "127.0.0.1";
@@ -47,7 +47,6 @@ class nMysql {
 			$this->m_user     = "root";
 			$this->m_password = "";
 			$this->m_charset = $charset;
-			return;
 		}
 		
 		if (PRODUCT_MODEL && $db=='sogou_shouji') {
@@ -71,15 +70,13 @@ class nMysql {
 			$this->m_user     = "ime_skins"; 
 			$this->m_password = "sogou_ime_skins";
 		}else {
-			$this->m_name     = $db;
-			$this->m_host     = "10.11.215.202";
-			$this->m_port     = "3306";
-			$this->m_user     = "root";
-			$this->m_password = "123456";
+//			$this->m_name     = $db;
+//			$this->m_host     = "10.11.215.202";
+//			$this->m_port     = "3306";
+//			$this->m_user     = "root";
+//			$this->m_password = "123456";
 		}
-		
 		$this->m_charset = $charset;
-		
 	}
 	
 	function _initconnection() {

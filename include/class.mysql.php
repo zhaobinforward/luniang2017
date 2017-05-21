@@ -47,7 +47,6 @@ class nMysql {
 			$this->m_user     = "root";
 			$this->m_password = "123456";
 			$this->m_charset = $charset;
-			return;
 		}
 		
 		if (PRODUCT_MODEL && $db=='sogou_shouji') {
@@ -71,13 +70,13 @@ class nMysql {
 			$this->m_user     = "ime_skins"; 
 			$this->m_password = "sogou_ime_skins";
 		}else {
-			$this->m_name     = $db;
-			$this->m_host     = "10.11.215.202";
-			$this->m_port     = "3306";
-			$this->m_user     = "root";
-			$this->m_password = "123456";
+//			$this->m_name     = $db;
+//			$this->m_host     = "10.11.215.202";
+//			$this->m_port     = "3306";
+//			$this->m_user     = "root";
+//			$this->m_password = "123456";
 		}
-		
+
 		$this->m_charset = $charset;
 		
 	}
