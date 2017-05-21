@@ -6,6 +6,60 @@ $(function(){
 	}).on(touchSupport()?'touchend':'mouseup', '*[clickbtn="true"]', function(){
 		$(this).removeClass('clickbtn');
 	});
+	$('.s-download').click(function(){
+		var idx = $('.s-download').index(this);
+		if($('.s-download').eq(idx).attr('ajaxing')) {
+			return;
+		}
+		$('.s-download').eq(idx).attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.s-download').eq(idx).removeAttr('ajaxing')}
+		});
+	});
+	$('.anchor-share-weibo').click(function(){
+		share_weibo();
+		if($('.anchor-share-weibo').attr('ajaxing')) {
+			return;
+		}
+		$('.anchor-share-weibo').attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.anchor-share-weibo').removeAttr('ajaxing')}
+		});
+	});
+	$('.anchor-share-qzone').click(function(){
+		share_qzone();
+		if($('.anchor-share-qzone').attr('ajaxing')) {
+			return;
+		}
+		$('.anchor-share-qzone').attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.anchor-share-qzone').removeAttr('ajaxing')}
+		});
+	});
 	$('.share-qzone').click(function(){
 		var idx = $('.share-qzone').index(this);
 	});
@@ -55,10 +109,10 @@ $(function(){
 			}
 			if(telnumber.length < 1) {
 				alert('没有填写电话');
-				return;
-			} else if(!/^\+?[\d\-]{11,13}$/i.test(telnumber)) {
+				return false;
+			} else if(!/^1[34578]{1}\d{9}$/i.test(telnumber)) {
 				alert('电话格式不正确(应由11~13位数字组成)');
-				return;
+				return false;
 			}
 			
 			if($(form).find('input[name="email"]').size() > 0) {
@@ -68,10 +122,10 @@ $(function(){
 			}
 			if(email.length < 1) {
 				alert('没有填写邮箱');
-				return;
+				return false;
 			} else if(!isemail(email)) {
 				alert('邮箱格式不正确');
-				return;
+				return false;
 			}
 			
             if($(form).find('input[name="addr"]').size() > 0) {
@@ -95,6 +149,7 @@ $(function(){
             }
 			resp.errno = parseInt(resp.errno);
             if(resp.errno == 0) {//save success
+				$(window).unbind('beforeunload');
 				alert(resp.errmsg);
 				/*是否需要关闭form表单*/
                 return;
@@ -196,12 +251,17 @@ function showResult(award, hited, notryleft) {
 		});
 		$('#not-hits.popbox-wrap, .popbox-cover').show();
 	} else {/*hits*/
+		$(window).bind('beforeunload',function(){return '尚未提交领奖信息'});
+		$('#hits .popbox-title').html('恭喜抽中'+award.prize_name);
 		$('.popbox-cover').css({
 			width:Math.max($(window).width(),$(document).width())+'px',
 			height:Math.max($(window).height(),$(document).height())+'px'
 		}).unbind('click');
 		$('.popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
-			$('#hits.popbox-wrap, .popbox-cover').hide();
+			if(window.confirm('尚未提交领奖信息，确认要关闭吗？')) {
+				$('#hits.popbox-wrap, .popbox-cover').hide();
+				iScrollTo('lottery');
+			}
 		});
 		$('#hits.popbox-wrap, .popbox-cover').show();
 	}
@@ -226,7 +286,7 @@ function lottery(before, after) {
 			console.log(resp);
 			if(resp.errno == 2) {/*hited*/
 				showResult({}, true, false);
-			} else if(resp.errno == 4) {/*no-tryleft*/
+			} else if(resp.errno == 4 || resp.errno == 3) {/*no-tryleft*/
 				showResult({}, false, true);
 			} else {/*none*/
 				var hitpos;
