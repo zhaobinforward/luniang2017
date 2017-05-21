@@ -350,7 +350,7 @@ function iRoller(options) {
 		inipos: -1,/*初始索引位置,从0开始*/
 		count: 8,
 		speed: 200,/*初始转动速度*/
-		speedEnd: 200,/*结束转动速度*/
+		speedEnd: 300,/*结束转动速度*/
 		speedType: 'linear',/*速度类型, linear:匀速,easing-in:先加速后减速*/
 		hitpos: 0,/*命中位置,从0开始*/
 		cycle: 2,/*基础循环次数*/
@@ -369,7 +369,7 @@ function iRoller(options) {
 	this.rolling2;
 	this.speeding;/*即时速度*/
 	this.maxspeed = 50;/*最大速度*/
-	this.xdelta = 10;/**/
+	this.xdelta = 20;/**/
 	this.paused;
 	this.init();
 }
@@ -441,7 +441,7 @@ iRoller.prototype = {
 				}
 				if(cycler > _self.options.cycle) {/*超过基础循环次数后减速*/
 					_self.speeding += _self.xdelta;
-					console.log(_self.counter, cycler, _self.speeding, 'redu');
+					//console.log(_self.counter, cycler, _self.speeding, 'redu');
 				}
 				_self.options.direction ? _self.current-- : _self.current++;/*转动方向*/
 				if(_self.current > _self.options.count) {
@@ -462,7 +462,7 @@ iRoller.prototype = {
 				roll();
 			}, _self.speeding);
 		}
-		if(_self.hitpos<1) {
+		if(_self.options.hitpos < 1) {
 			return false;
 		}
 		_self.rolling = !0;/*标记为进行中*/

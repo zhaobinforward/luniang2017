@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
@@ -190,43 +190,43 @@
 			<p>《中国怪谈》T恤(138元)</p>
 		</div>
 		<div class="roller-wrap">
-			<div class="roller roller-1 active">
+			<div class="roller roller-1 active" ord="1" atype="1">
 				<div class="roller-inner"><img src="static/i/award-vip1.png" /></div>
 				<span class="roller-frame"></span>
 			</div>
-			<div class="roller roller-2">
+			<div class="roller roller-2" ord="2" atype="4">
 				<div class="roller-inner"><img src="static/i/award-baozhen.png" /></div>
 				<span class="roller-frame"></span>
 			</div>
-			<div class="roller roller-3">
-				<div class="roller-inner"><img src="static/i/award-luniang-fudai.png" /></div>
+			<div class="roller roller-3" ord="3" atype="3">
+				<div class="roller-inner"><img src="static/i/award-chunri-fudai.png" /></div>
 				<span class="roller-frame"></span>
 			</div>
-			<div class="roller roller-4">
+			<div class="roller roller-4" ord="4" atype="8">
 				<div class="roller-inner"><img src="static/i/award-tshirt.png" /></div>
 				<span class="roller-frame"></span>
 			</div>
-			<div class="roller roller-5">
+			<div class="roller roller-5" ord="5" atype="2">
 				<div class="roller-inner"><img src="static/i/award-vip3.png" /></div>
 				<span class="roller-frame"></span>
 			</div>
-			<div class="roller roller-6">
+			<div class="roller roller-6" ord="6" atype="0">
 				<div class="roller-inner"><img src="static/i/award-thanks.png" /></div>
 				<span class="roller-frame"></span>
 			</div>
-			<div class="roller roller-7">
+			<div class="roller roller-7" ord="7" atype="5">
 				<div class="roller-inner"><img src="static/i/award-danxingben.png" /></div>
 				<span class="roller-frame"></span>
 			</div>
-			<div class="roller roller-8">
+			<div class="roller roller-8" ord="8" atype="7">
 				<div class="roller-inner"><img src="static/i/award-cup.png" /></div>
 				<span class="roller-frame"></span>
 			</div>
-			<div class="roller roller-9">
+			<div class="roller roller-9" ord="9" atype="6">
 				<div class="roller-inner"><img src="static/i/award-quwei-fudai.png" /></div>
 				<span class="roller-frame"></span>
 			</div>
-			<div class="roller roller-10">
+			<div class="roller roller-10" ord="10" atype="0">
 				<div class="roller-inner"><img src="static/i/award-thanks.png" /></div>
 				<span class="roller-frame"></span>
 			</div>
@@ -256,7 +256,7 @@
 <div class="sidebar-wrap">
 	<div class="sidebar-title"></div>
 	<div class="sidebar-cont">
-		<div class="tryleft-info">剩余次数：10次</div>
+		<div class="tryleft-info"></div>
 		<a href="javascript:;" class="anchor-download"></a>
 		<a href="javascript:;" class="anchor-lottery"></a>
 		<a href="https://manhua.163.com/" class="anchor-manhua" target="_blank"></a>
@@ -266,11 +266,12 @@
 		</div>
 	</div>
 </div>
+<div class="popbox-cover"></div>
 <div class="popbox-wrap" id="no-tryleft" style="display:none">
 	<div class="popbox-cont">
 		<div class="popbox-cont-inner">
 			<div class="popbox-btn-wrap">
-				<a href="#" class="popbox-btn popbox-btn-download" style="margin-right:4px"></a>
+				<a href="javascript:iScrollTo('download');$('#no-tryleft,.popbox-cover').hide();" class="popbox-btn popbox-btn-download" style="margin-right:4px"></a>
 				<a href="#" class="popbox-btn popbox-btn-share-weibo" style="margin:0 4px 0"></a>
 				<a href="#" class="popbox-btn popbox-btn-share-qzone" style="margin-left:4px"></a>
 			</div>
@@ -282,14 +283,14 @@
 	<div class="popbox-cont">
 		<div class="popbox-cont-inner">
 			<p class="popbox-title">恭喜抽中网易漫画VIP一个月</p>
-			<form ajaxform="true" action="congratulation.php" method="post"></form>
+			<form ajaxform="true" action="congratulation.php" method="post">
 				<div class="fieldtr" style="margin-top:150px"><input class="input-name" type="text" name="realname" /></div>
 				<div class="fieldtr"><input class="input-tel" type="text" name="telnumber" value="" /></div>
 				<div class="fieldtr"><input class="input-email" type="text" name="email" value="" /></div>
 				<div class="fieldtr"><input class="input-addr" type="text" name="addr" value="" /></div>
 				<div class="popbox-btn-wrap" style="margin:44px auto 0;">
-					<button class="popbox-btn popbox-btn-save" style="margin-right:22px"></button>
-					<button class="popbox-btn popbox-btn-tryagain" style="margin-left:22px"></button>
+					<button type="submit" class="popbox-btn popbox-btn-save" style="margin-right:22px"></button>
+					<button type="button"class="popbox-btn popbox-btn-tryagain" style="margin-left:22px"></button>
 				</div>
 			</form>
 		</div>
@@ -323,4 +324,6 @@
 <script type="text/javascript" src="static/j/common.js"></script>
 <script type="text/javascript" src="static/j/page.js"></script>
 <script type="text/javascript" src="static/j/share.js"></script>
+<script type="text/javascript" src="data/skins.js"></script>
+<script type="text/javascript" src="data/awards.js"></script>
 </html>

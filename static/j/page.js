@@ -12,10 +12,12 @@ $(function(){
 	$('.share-weibo').click(function(){
 		var idx = $('.share-weibo').index(this);
 	});
+	getInitInfo(function(data){$('.tryleft-info').html('å‰©ä½™æ¬¡æ•°ï¼š'+data.residue_times+'æ¬¡')});
 	roller = new iRoller({
-		cycle: 2,
+		cycle: 1,
+		hitpos: -1,
 		speed: 150,
-		speedEnd: 150,
+		speedEnd: 300,
 		speedType: 'easing-in',
 		rollerClass: 'roller',
 		activeClass: 'active',
@@ -42,7 +44,7 @@ $(function(){
 				realname = '';
 			}
 			if (realname.length < 1) {
-				alert('Ã»ÓÐÌîÐ´ÐÕÃû');
+				alert('æ²¡æœ‰å¡«å†™å§“å');
 				return false;
 			}
 			
@@ -52,10 +54,10 @@ $(function(){
 				telnumber = '';
 			}
 			if(telnumber.length < 1) {
-				alert('Ã»ÓÐÌîÐ´µç»°');
+				alert('æ²¡æœ‰å¡«å†™ç”µè¯');
 				return;
 			} else if(!/^\+?[\d\-]{11,13}$/i.test(telnumber)) {
-				alert('µç»°¸ñÊ½²»ÕýÈ·(Ó¦ÓÉ11~13Î»Êý×Ö×é³É)');
+				alert('ç”µè¯æ ¼å¼ä¸æ­£ç¡®(åº”ç”±11~13ä½æ•°å­—ç»„æˆ)');
 				return;
 			}
 			
@@ -65,10 +67,10 @@ $(function(){
 				email = '';
 			}
 			if(email.length < 1) {
-				alert('Ã»ÓÐÌîÐ´ÓÊÏä');
+				alert('æ²¡æœ‰å¡«å†™é‚®ç®±');
 				return;
 			} else if(!isemail(email)) {
-				alert('ÓÊÏä¸ñÊ½²»ÕýÈ·');
+				alert('é‚®ç®±æ ¼å¼ä¸æ­£ç¡®');
 				return;
 			}
 			
@@ -78,7 +80,7 @@ $(function(){
 				addr = '';
 			}
 			if(addr.length < 1) {
-				alert('Ã»ÓÐÌîÐ´µØÖ·');
+				alert('æ²¡æœ‰å¡«å†™åœ°å€');
 				return false;
 			}
         },
@@ -87,30 +89,47 @@ $(function(){
                 try {
                     resp = JSON.parse(resp);
                 } catch (e) {
-					alert('ÏìÓ¦Ê§°Ü');
+					alert('å“åº”å¤±è´¥');
                     return;
                 }
             }
 			resp.errno = parseInt(resp.errno);
             if(resp.errno == 0) {//save success
 				alert(resp.errmsg);
-				/*ÊÇ·ñÐèÒª¹Ø±Õform±íµ¥*/
+				/*æ˜¯å¦éœ€è¦å…³é—­formè¡¨å•*/
                 return;
             }
 			alert(resp.errmsg);
         },
         error: function () {
-            alert('ÏìÓ¦Ê§°Ü');
+            alert('å“åº”å¤±è´¥');
             return;
         },
         complete: function (XMLHttpRequest, status) {
             if(status == 'timeout') {
-				alert('ÇëÇó³¬Ê±');
+				alert('è¯·æ±‚è¶…æ—¶');
 				return;
             }
         }
     });
 });
+
+function getInitInfo(call) {
+	var call = typeof call == 'function' ? call : function(){};
+	ajaxprocess({
+		type: 'get',
+		url: 'ajax/lotteryTimes.php',
+		data: {},
+		dataType: 'json',
+		success: function(resp) {
+			call(resp.data);
+		},
+		error: function() {
+			console.log('exec getInitInfo() eror');
+		},
+		complete: function(){}
+	});
+}
 
 function iScrollTo(anchor, timeout) {
 	var anchor = anchor || 'download';
@@ -134,31 +153,117 @@ function iScrollTo(anchor, timeout) {
 	}catch(e){}
 }
 
+function getPosByAwardType(atype) {
+	var atype = atype || '0';
+	var ords = [];
+	$('.roller-wrap>.roller[atype="'+atype+'"]').each(function(){
+		ords.push(parseInt($(this).attr('ord')));
+	});
+	var $size = $(ords).size();
+	var rand = Math.floor(Math.random()*(($size-1)-0+1)+0);
+	return ords[rand>=$size?($size-1):rand];
+}
+
+function showResult(award, hited, notryleft) {
+	var award = award || {};
+	var hited = hited || false;
+	var notryleft = notryleft || false;
+	if(hited) {
+		$('.popbox-cover').css({
+			width:Math.max($(window).width(),$(document).width())+'px',
+			height:Math.max($(window).height(),$(document).height())+'px'
+		}).unbind('click').bind('click', function(){
+			$(this).unbind('click').hide();
+			$('#hited.popbox-wrap, .popbox-cover').hide()
+		});
+		$('#hited.popbox-wrap, .popbox-cover').show();
+	} else if(notryleft) {
+		$('.popbox-cover').css({
+			width:Math.max($(window).width(),$(document).width())+'px',
+			height:Math.max($(window).height(),$(document).height())+'px'
+		}).unbind('click').bind('click', function(){
+			$(this).unbind('click').hide();
+			$('#no-tryleft.popbox-wrap, .popbox-cover').hide()
+		});
+		$('#no-tryleft.popbox-wrap, .popbox-cover').show();
+	} else if($.isEmptyObject(award)) {
+		$('.popbox-cover').css({
+			width:Math.max($(window).width(),$(document).width())+'px',
+			height:Math.max($(window).height(),$(document).height())+'px'
+		}).unbind('click').bind('click', function(){
+			$(this).unbind('click').hide();
+			$('#not-hits.popbox-wrap, .popbox-cover').hide()
+		});
+		$('#not-hits.popbox-wrap, .popbox-cover').show();
+	} else {/*hits*/
+		$('.popbox-cover').css({
+			width:Math.max($(window).width(),$(document).width())+'px',
+			height:Math.max($(window).height(),$(document).height())+'px'
+		}).unbind('click');
+		$('.popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
+			$('#hits.popbox-wrap, .popbox-cover').hide();
+		});
+		$('#hits.popbox-wrap, .popbox-cover').show();
+	}
+}
+
 function lottery(before, after) {
 	var before = typeof before == 'function' ? before : function(){};
 	var after = typeof after == 'function' ? after : function(){};
 	if(roller.rolling) {
 		return;
 	}
-	if(('#lottery-btn').attr('ajaxing')) {
+	if($('#lottery-btn').attr('ajaxing')) {
 		return;
 	}
-	roller.runforever();
+	$('#lottery-btn').attr('ajaxing', true);
 	ajaxprocess({
 		type: 'post',
 		url: 'ajax/lottery.php',
 		data: {},
 		dataType: 'json',
 		success: function(resp) {
-			showAlert(resp.message);
-			if(resp.status==1) {
-				setTimeout(function(){window.location.reload()},1250);
+			console.log(resp);
+			if(resp.errno == 2) {/*hited*/
+				showResult({}, true, false);
+			} else if(resp.errno == 4) {/*no-tryleft*/
+				showResult({}, false, true);
+			} else {/*none*/
+				var hitpos;
+				if(resp.errno == 1) {/*hits*/
+					hitpos = getPosByAwardType(resp.data.prize_type)-1;
+				} else {
+					hitpos = getPosByAwardType('0')-1;
+				}
+				$('.lottert-btn .lottert-btn-inner').removeClass('ani');
+				roller.run({
+					cycle: 1+Math.floor(Math.random()*(2-1+1)+1),/*Math.floor(Math.random()*(max-min+1)+min)*/
+					hitpos: hitpos,
+					callback: function() {
+						$('.lottert-btn .lottert-btn-inner').addClass('ani');
+						if(resp.errno == 1) {
+							showResult({prize_type:resp.data.prize_type,prize_name:resp.data.prize_name}, false, false);
+						} else {
+							showResult({}, false, false);
+						}
+						$('.tryleft-info').html('å‰©ä½™æ¬¡æ•°ï¼š'+resp.data.residue_times+'æ¬¡');
+					}
+				});
 			}
 		},
 		error: function() {
-			showAlert('ÇëÇóÊ§°Ü[ajax error]');
+			console.log('lottery ajax error');
+			var hitpos = getPosByAwardType('0')-1;
+			roller.run({
+				cycle: 1+Math.floor(Math.random()*(2-1+1)+1),
+				hitpos: hitpos,
+				callback: function() {
+					
+				}
+			});
 		},
-		complete: function(){}
+		complete: function(){
+			$('#lottery-btn').removeAttr('ajaxing');
+		}
 	});
-	roller.run({cycle:2 + Math.floor(Math.random()*(2-1+1)+1)});
 }
