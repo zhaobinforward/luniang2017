@@ -93,6 +93,14 @@ class Lottery implements LotteryIf{
         $sSql = "select * from luniang_2017_user where uuid='".$sUuid."' limit 1";
         $oQuery = $this->_MDB->Query($sSql);
         $aRes = $this->_MDB->FetchArray($oQuery);
+        //先检查有没有这个用户
+        if(isset($aRes['residue_times'])) {
+            //隔天重置
+            if (date("Y-m-d") > date("Y-m-d", $aRes['update_time'])) {
+                $sSql = "update luniang_2017_user set max_times=12,residue_times=0,update_time='" . time() . "' where uuid='" . $sUuid . "'";
+                $this->_MDB->Query($sSql);
+            }
+        }
         return $aRes;
     }
 
@@ -106,12 +114,11 @@ class Lottery implements LotteryIf{
         $sSql = "select * from luniang_2017_user where uuid='".$sUuid."' limit 1";
         $oQuery = $this->_MDB->Query($sSql);
         $aRes = $this->_MDB->FetchArray($oQuery);
-        $iResidueTimes = $aRes['residue_times'];
         //先检查有没有这个用户
         if(isset($aRes['residue_times'])){
             //隔天重置
             if(date("Y-m-d") > date("Y-m-d",$aRes['update_time'])){
-                $sSql = "update luniang_2017_user set max_times=12,residue_times=0,update_time='".time()."' where uuid='".$sUuid."'";
+                $sSql = "update luniang_2017_user set max_times=11,residue_times=1,update_time='".time()."' where uuid='".$sUuid."'";
             }else{
                 if($iType == self::ADD_CHANCES){//增加抽奖机会
                     if($aRes['max_times'] > 0){//如果还有机会可以增加
