@@ -13,11 +13,15 @@ $sUserName = $_POST['user_name'];
 $sUserEmail = $_POST['user_email'];
 $sUserAddr = $_POST['user_addr'];
 $sUuid = $_G['uid'];
+//$iUserPhone = 13578126493;
+//$sUserName = '测试';
+//$sUserEmail = '3128475@qq.com';
+//$sUserAddr = '北京';
 
 $sPhonePattern = "/^\+?[\d\-]{11,13}$/i";
 
 $errmsg = '';
-if(preg_match($sPhonePattern, $iUserPhone)){
+if(!preg_match($sPhonePattern, $iUserPhone)){
     $errmsg = '手机号格式有误,请重新填写';
 }elseif(!isemail($sUserEmail)){
     $errmsg = '邮箱格式有误,请重新填写';
