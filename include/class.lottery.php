@@ -98,7 +98,10 @@ class Lottery implements LotteryIf{
             //隔天重置
             if (date("Y-m-d") > date("Y-m-d", $aRes['update_time'])) {
                 $sSql = "update luniang_2017_user set max_times=12,residue_times=0,update_time='" . time() . "' where uuid='" . $sUuid . "'";
-                $this->_MDB->Query($sSql);
+                if($this->_MDB->Query($sSql)){
+                    $aRes['max_times'] = 12;
+                    $aRes['residue_times'] = 0;
+                }
             }
         }
         return $aRes;
