@@ -1,81 +1,164 @@
 'use strict';
-/* roller */
-function iRoller(options) {
-	this.defaults = {
-		inipos: -1,/*初始索引位置,从0开始*/
-		count: 8,
-		speed: 200,/*初始转动速度*/
-		speedEnd: 300,/*结束转动速度*/
-		speedType: 'linear',/*速度类型, linear:匀速,easing-in:先加速后减速*/
-		hitpos: 0,/*命中位置,从0开始*/
-		cycle: 10,/*基础循环次数*/
+var roller;
+$(function(){
+	$(document).on(touchSupport()?'touchstart':'mousedown', '*[clickbtn="true"]', function(){
+		$(this).addClass('clickbtn');
+	}).on(touchSupport()?'touchend':'mouseup', '*[clickbtn="true"]', function(){
+		$(this).removeClass('clickbtn');
+	});
+	$('.share-qzone').click(function(){
+		var idx = $('.share-qzone').index(this);
+	});
+	$('.share-weibo').click(function(){
+		var idx = $('.share-weibo').index(this);
+	});
+	roller = new iRoller({
+		cycle: 2,
+		speed: 150,
+		speedEnd: 150,
+		speedType: 'easing-in',
 		rollerClass: 'roller',
 		activeClass: 'active',
-		direction: 0,/*0顺时针,1逆时针*/
-		callback: function(){}/*回调函数*/
-	};
-	this.options = $.extend(this.defaults, options || {}),/* initial params */
-	this.$rollers,
-	this.timer,
-	this.current;/*当前指针,从1开始*/
-	this.rolling;
-	this.paused;
-	this.init();
-}
-iRoller.prototype = {
-	init: function() {
-		this.$rollers = $('.' + this.options.rollerClass);
-		this.current = this.options.inipos < 0 || this.options.inipos > this.options.count - 1 ? 1 : this.options.inipos+1;
-		this.rolling = !1;
-		$(this.$rollers).removeClass(this.options.activeClass).filter('.'+this.options.rollerClass+'-'+this.options.inipos+1).addClass(this.options.activeClass);
-	},
-	run: function(options) {
-		var _self = this;
-		_self.options = $.extend(_self.options, options || {});/* initial params */
-		var speed = _self.options.speed;
-		var counter = 0;
-		var cycle = 0;
-		var roll = function() {
-			counter++;
-			cycle = parseInt(counter/_self.options.count);
-			$(_self.$rollers).removeClass(_self.options.activeClass).filter('.'+_self.options.rollerClass+'-'+_self.current).addClass(_self.options.activeClass);
-			_self.timer = setTimeout(function(){
-				if(_self.options.speedType == 'linear') {
-				} else {
-					if(cycle < _self.options.cycle/2) {/*先加速*/
-						speed -= 20;
-					} else if(cycle <= _self.options.cycle) {/*后减速*/
-						speed += 20;
-					}
-				}
-				if(speed < 40) {/*限定最高速度*/
-					speed = 40;
-				}
-				if(cycle > _self.options.cycle) {/*超过基础循环次数后减速*/
-					speed += 20;
-				}
-				_self.options.direction ? _self.current-- : _self.current++;/*转动方向*/
-				if(_self.current > _self.options.count) {
-					_self.current = 1;
-				} else if(_self.current < 1){
-					_self.current = _self.options.count;
-				}
-				/*停止的条件*/
-				if(speed > _self.options.speedEnd && _self.current == _self.options.hitpos+1) {
-					try{clearTimeout(_self.timer)}catch(e){}
-					_self.timer = null;
-					_self.rolling = !1;
-					$(_self.$rollers).removeClass(_self.options.activeClass).filter('.'+_self.options.rollerClass+'-'+_self.current).addClass(_self.options.activeClass);
-					if(typeof _self.options.callback == 'function') {_self.options.callback()}
-					return;
-				}
-				roll();
-			}, speed);
-		}
-		if(_self.hitpos<1) {
-			return false;
-		}
-		_self.rolling = !0;/*标记为进行中*/
-		roll();
+		count: 10
+	});
+	$('.anchor-download').click(function(){iScrollTo('download')});
+	$('.anchor-lottery').click(function(){iScrollTo('lottery')});
+	$('#lottery-btn').click(function(){lottery()});
+	$('.name-list').slide({mainCell:'.name-list-inner ul',autoPlay:true,effect:'topMarquee',vis:5,interTime:50,opp:false,pnLoop:true,trigger:'click',mouseOverStop:true});
+	
+	$('form[ajaxform="true"]').ajaxForm({
+        dataType: 'json',
+		timeout: 3000,
+        beforeSubmit: function (data, form) {
+            var realname, telnumber, email, addr;
+			
+			var isemail = function($email) {
+				return $email.length > 6 && $email.length <= 32 && /^([A-Za-z0-9\-_.+]+)@([A-Za-z0-9\-]+[.][A-Za-z0-9\-.]+)$/i.test($email);
+			}
+			
+            if($(form).find('input[name="realname"]').size() > 0) {
+                realname = $.trim($(form).find('input[name="realname"]').val());
+            } else {
+				realname = '';
+			}
+			if (realname.length < 1) {
+				alert('没有填写姓名');
+				return false;
+			}
+			
+			if($(form).find('input[name="telnumber"]').size() > 0) {
+                telnumber = $.trim($(form).find('input[name="telnumber"]').val());
+            } else {
+				telnumber = '';
+			}
+			if(telnumber.length < 1) {
+				alert('没有填写电话');
+				return;
+			} else if(!/^\+?[\d\-]{11,13}$/i.test(telnumber)) {
+				alert('电话格式不正确(应由11~13位数字组成)');
+				return;
+			}
+			
+			if($(form).find('input[name="email"]').size() > 0) {
+                email = $.trim($(form).find('input[name="email"]').val());
+            } else {
+				email = '';
+			}
+			if(email.length < 1) {
+				alert('没有填写邮箱');
+				return;
+			} else if(!isemail(email)) {
+				alert('邮箱格式不正确');
+				return;
+			}
+			
+            if($(form).find('input[name="addr"]').size() > 0) {
+                addr = $.trim($(form).find('input[name="addr"]').val());
+            } else {
+				addr = '';
+			}
+			if(addr.length < 1) {
+				alert('没有填写地址');
+				return false;
+			}
+        },
+        success: function (resp) {
+            if (typeof resp != 'object') {
+                try {
+                    resp = JSON.parse(resp);
+                } catch (e) {
+					alert('响应失败');
+                    return;
+                }
+            }
+			resp.errno = parseInt(resp.errno);
+            if(resp.errno == 0) {//save success
+				alert(resp.errmsg);
+				/*是否需要关闭form表单*/
+                return;
+            }
+			alert(resp.errmsg);
+        },
+        error: function () {
+            alert('响应失败');
+            return;
+        },
+        complete: function (XMLHttpRequest, status) {
+            if(status == 'timeout') {
+				alert('请求超时');
+				return;
+            }
+        }
+    });
+});
+
+function iScrollTo(anchor, timeout) {
+	var anchor = anchor || 'download';
+	var timeout = timeout || 1250;
+	var offsetY = 0;
+	switch(anchor) {
+		case 'download':
+			offsetY = $('.main-cont').offset().top;break;
+		case 'lottery':
+			offsetY = $('.lottery-cont').offset().top;break;
+		default :
+		offsetY = $('.main-cont').offset().top;
 	}
+	$('html, body').animate({scrollTop: offsetY}, timeout);
+	$(document).mousedown(function(){$('html, body').stop()});
+	try {
+		document.addEventListener('DOMMouseScroll',function(){$('html, body').stop()},false);
+	}catch(e){}
+	try {
+		document.onmousewheel = function(){$('html, body').stop()}
+	}catch(e){}
+}
+
+function lottery(before, after) {
+	var before = typeof before == 'function' ? before : function(){};
+	var after = typeof after == 'function' ? after : function(){};
+	if(roller.rolling) {
+		return;
+	}
+	if(('#lottery-btn').attr('ajaxing')) {
+		return;
+	}
+	roller.runforever();
+	ajaxprocess({
+		type: 'post',
+		url: 'ajax/lottery.php',
+		data: {},
+		dataType: 'json',
+		success: function(resp) {
+			showAlert(resp.message);
+			if(resp.status==1) {
+				setTimeout(function(){window.location.reload()},1250);
+			}
+		},
+		error: function() {
+			showAlert('请求失败[ajax error]');
+		},
+		complete: function(){}
+	});
+	roller.run({cycle:2 + Math.floor(Math.random()*(2-1+1)+1)});
 }

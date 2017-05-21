@@ -42,7 +42,6 @@ function show_share() {
         );
         return true;
     }
-	
 	var hide = function() {
 		$('#menu-share,#share-cover').hide();
 	}
