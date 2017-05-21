@@ -52,6 +52,7 @@ class Lottery implements LotteryIf{
     const PRIZED_HAS_USERINFO = 2;//中奖已填中奖信息
     const ADD_CHANCES = 1;
     const USE_CHANGES = 2;
+    const LOG_ON = TRUE;
 
     public static $prizeTypeArr = array(
         '1' => '网易漫画一个月VIP(10元)',
@@ -316,18 +317,20 @@ class Lottery implements LotteryIf{
         }
     }
 
-
     /*
-     * 通过uuid获取uid
-     * @param $sUuid string
-     * return uid
-     * */
-//    private function _genUidByUuid($sUuid){
-//        $sSql = "select * from luniang_2017_user where uuid='".$sUuid."'";
-//        $oQuery = $this->_MDB->Query($sSql);
-//        $aRes = $this->_MDB->FetchArray($oQuery);
-//        return $aRes['uid'];
-//    }
+     * 记录抽检log
+     * @param $log Array 日志数据
+     * @return Integer
+     * 1: 记录成功
+     * <1: 记录失败
+    */
+    private function _write_log($log)
+    {
+        if (self::LOG_ON) {
+            return $this->_MDB->insert_table('luniang_2017_log', $log);
+        }
+        return -99;
+    }
 
 
 
