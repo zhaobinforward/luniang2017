@@ -8,17 +8,17 @@
 require_once("../config.php");
 require_once(R_ROOT.'/include/class.lottery.php');
 
-$iUserPhone = intval($_POST['user_phone']);
-$sUserName = $_POST['user_name'];
-$sUserEmail = $_POST['user_email'];
-$sUserAddr = $_POST['user_addr'];
+$iUserPhone = intval($_POST['telnumber']);
+$sUserName = $_POST['realname'];
+$sUserEmail = $_POST['email'];
+$sUserAddr = $_POST['addr'];
 $sUuid = $_G['uid'];
 //$iUserPhone = 13578126493;
 //$sUserName = '测试';
 //$sUserEmail = '3128475@qq.com';
 //$sUserAddr = '北京';
 
-$sPhonePattern = "/^\+?[\d\-]{11,13}$/i";
+$sPhonePattern = "/^1[34578]{1}\d{9}$/";
 
 $errmsg = '';
 if(!preg_match($sPhonePattern, $iUserPhone)){
@@ -31,8 +31,9 @@ if(!preg_match($sPhonePattern, $iUserPhone)){
 $oLottery = new Lottery();
 $bRes = $oLottery->insertLotteryInfo($sUuid, $sUserName, $iUserPhone, $sUserAddr, $sUserEmail);
 $iErrno = 1;
+$errmsg = '不能重复提交^.^';
 if($bRes){
-    $errmsg = 'success';
+    $errmsg = '保存成功';
     $iErrno = 0;
 }
 $aRes = array(
