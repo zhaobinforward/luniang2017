@@ -83,6 +83,7 @@ class Lottery implements LotteryIf{
             require_once(R_ROOT.'/include/class.mysql.php');
         }
         $this->_MDB = new nMysql('sogou_shoujiwap', array('charset'=>'utf8'));
+        $this->_MDB->_initconnection();
     }
 
     /*
@@ -91,6 +92,7 @@ class Lottery implements LotteryIf{
     * return array
     * */
     public function genLotteryTimes($sUuid){
+        $sUuid = $this->_escape_string($sUuid);
         $sSql = "select * from luniang_2017_user where uuid='".$sUuid."' limit 1";
         $oQuery = $this->_MDB->Query($sSql);
         $aRes = $this->_MDB->FetchArray($oQuery);
@@ -115,6 +117,7 @@ class Lottery implements LotteryIf{
     * return bool  成功或者失败
     * */
     public function updateLotteryTimes($sUuid, $iType=1){
+        $sUuid = $this->_escape_string($sUuid);
         $sSql = "select * from luniang_2017_user where uuid='".$sUuid."' limit 1";
         $oQuery = $this->_MDB->Query($sSql);
         $aRes = $this->_MDB->FetchArray($oQuery);
@@ -155,10 +158,12 @@ class Lottery implements LotteryIf{
     * return array('status'=>Integer, 'message'=>String, 'data'=>String/Array);
     * */
     public function doLottery($sUuid){
+        $sUuid = $this->_escape_string($sUuid);
+        $sStatus = 0;
         $sSql = "select count(*) as num from luniang_2017_prize where prize_date='".date("Ymd")."' and status=0 ";
         $oQuery = $this->_MDB->Query($sSql);
         $aResult = $this->_MDB->FetchArray($oQuery);
-        if($aResult['num'] == 0){
+        if($aResult['num'] == 0 ){
             $sStatus = 5 ;
         }
         if($this->_isRewarded($sUuid)){//该用户已经中过奖
@@ -185,7 +190,6 @@ class Lottery implements LotteryIf{
                     }
                     break;
                 default:
-                    $sStatus = 0;
                     break;
             }
             $aLog['ratio'] = $iRand;
@@ -214,7 +218,7 @@ class Lottery implements LotteryIf{
             $aLog['return_code'] = $sStatus;
             $aLog['return_info'] = self::$prizeStatusMessage[$sStatus];
             $aLog['create_time'] = time();
-            $this->_write_log($aLog);
+            $this->_writeLog($aLog);
         }
 
         $aData['residue_times'] = $iResidueTimes;
@@ -234,6 +238,11 @@ class Lottery implements LotteryIf{
     * return bool
     * */
     public function insertLotteryInfo($sUuid, $sName, $iPhone, $sAddr, $sEmail){
+        $sUuid = $this->_escape_string($sUuid);
+        $sName = $this->_escape_string($sName);
+        $sAddr = $this->_escape_string($sAddr);
+        $sEmail = $this->_escape_string($sEmail);
+
         $sSql = "select * from luniang_2017_prize where uuid='".$sUuid."' and status='1'";
         $oQuery = $this->_MDB->Query($sSql);
         $aRes = $this->_MDB->FetchArray($oQuery);
@@ -349,14 +358,26 @@ class Lottery implements LotteryIf{
      * 1: 记录成功
      * <1: 记录失败
     */
-    private function _write_log($log)
-    {
+    private function _writeLog($log){
         if (self::LOG_ON) {
             return $this->_MDB->insert_table('luniang_2017_log', $log);
         }
         return -99;
     }
 
+    /*
+     * 防止sql注入
+     * @param $sValue string 需要防注入的字符串
+     * return string
+     * */
+    private function _escape_string($sValue){
+        if(PHP7){
+            $sValue = mysqli_real_escape_string($this->_MDB->m_link, $sValue);
+        }else{
+            $sValue = mysql_real_escape_string($sValue);
+        }
+        return $sValue;
+    }
 
 
 }
