@@ -12,7 +12,7 @@ interface LotteryIf
     /*
      * 执行抽奖
      * @param $sUuid string 用户唯一的uuid
-     * return array('status'=>Integer, 'message'=>String, 'data'=>String/Array);
+     * return array('errno'=>Integer, 'errmsg'=>String, 'data'=>String/Array);
      * */
     public function doLottery($sUuid);
 
