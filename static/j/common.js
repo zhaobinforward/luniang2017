@@ -456,7 +456,7 @@ iRoller.prototype = {
 					_self.rolling = !1;
 					_self.counter = 0;
 					$(_self.$rollers).removeClass(_self.options.activeClass).filter('.'+_self.options.rollerClass+'-'+_self.current).addClass(_self.options.activeClass);
-					if(typeof _self.options.callback == 'function') {_self.options.callback()}
+					if(typeof _self.options.callback == 'function') {setTimeout(_self.options.callback, 400)}
 					return;
 				}
 				roll();
