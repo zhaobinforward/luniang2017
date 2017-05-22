@@ -307,3 +307,168 @@ function getSiteUrl() {
 	url += url.substr(url.length-1, 1) == '/' ? '' : '/';
 	return url;
 }
+
+/*通用ajax提交处理*/
+function ajaxprocess(options) {
+	var defaults = {
+		type: 'get',
+		url: '',
+		data: '',
+		dataType: 'json',
+		success: function(resp) {
+			showAlert(resp.message);
+			if(resp.status==1) {
+				setTimeout(function(){window.location.reload()},1250);
+			}
+		},
+		error: function() {
+			showAlert('请求失败[ajax error]');
+		},
+		complete: function(){}
+	};
+	var options = $.extend(defaults, options);
+	$.ajax({
+		type: options.type,
+		url: options.url,
+		data: options.data,
+		dataType: options.dataType,
+		success: function(resp) {
+			options.success(resp);
+		},
+		error: function() {
+			options.error();
+		},
+		complete: function() {
+			options.complete();
+		}
+	});
+}
+
+/* roller */
+function iRoller(options) {
+	this.defaults = {
+		inipos: -1,/*初始索引位置,从0开始*/
+		count: 8,
+		speed: 200,/*初始转动速度*/
+		speedEnd: 300,/*结束转动速度*/
+		speedType: 'linear',/*速度类型, linear:匀速,easing-in:先加速后减速*/
+		hitpos: 0,/*命中位置,从0开始*/
+		cycle: 2,/*基础循环次数*/
+		rollerClass: 'roller',
+		activeClass: 'active',
+		direction: 0,/*0顺时针,1逆时针*/
+		callback: function(){}/*回调函数*/
+	};
+	this.options = $.extend(this.defaults, options || {}),/* initial params */
+	this.$rollers,
+	this.timer,
+	this.timer2,
+	this.current;/*当前指针,从1开始*/
+	this.counter;/*已经滚过的格子计数*/
+	this.rolling;
+	this.rolling2;
+	this.speeding;/*即时速度*/
+	this.maxspeed = 50;/*最大速度*/
+	this.xdelta = 20;/**/
+	this.paused;
+	this.init();
+}
+iRoller.prototype = {
+	init: function() {
+		this.$rollers = $('.' + this.options.rollerClass);
+		this.current = this.options.inipos < 0 || this.options.inipos > this.options.count - 1 ? 1 : this.options.inipos+1;
+		this.rolling = !1;
+		this.rolling2 = !1;
+		this.counter = 0;
+		this.speeding = 0;
+		$(this.$rollers).removeClass(this.options.activeClass).filter('.'+this.options.rollerClass+'-'+this.options.inipos+1).addClass(this.options.activeClass);
+	},
+	runforever: function() {
+		var _self = this;
+		if(_self.rolling2) {
+			return;
+		}
+		_self.speeding = _self.options.speed < _self.maxspeed ? _self.maxspeed : _self.options.speed;
+		var cycler = 0;
+		var roll = function() {
+			$(_self.$rollers).removeClass(_self.options.activeClass).filter('.'+_self.options.rollerClass+'-'+_self.current).addClass(_self.options.activeClass);
+			_self.timer2 = setTimeout(function(){
+				_self.options.direction ? _self.current-- : _self.current++;/*转动方向*/
+				if(_self.current > _self.options.count) {
+					_self.current = 1;
+				} else if(_self.current < 1){
+					_self.current = _self.options.count;
+				}
+				roll();
+			}, _self.speeding);
+		}
+		_self.rolling2 = !0;/*标记为进行中*/
+		roll();
+	},
+	stopforever() {/*平滑停止runforever*/
+		var _self = this;
+		if(!_self.rolling2) {
+			return;
+		}
+		try{clearTimeout(_self.timer2)}catch(e){}
+		_self.rolling2 = !1;
+		_self.run();
+		_self.stop();
+	},
+	run: function(options) {
+		var _self = this;
+		if(_self.rolling) {
+			return;
+		}
+		try{clearTimeout(_self.timer2)}catch(e){}
+		_self.rolling2 = !1;
+		_self.options = $.extend(_self.options, options || {});/* initial params */
+		_self.speeding = _self.options.speed;
+		var cycler = 0;
+		var roll = function() {
+			_self.counter++;
+			cycler = parseInt(_self.counter/_self.options.count);
+			$(_self.$rollers).removeClass(_self.options.activeClass).filter('.'+_self.options.rollerClass+'-'+_self.current).addClass(_self.options.activeClass);
+			_self.timer = setTimeout(function(){
+				if(_self.options.speedType == 'linear') {
+				} else {
+					if(cycler < _self.options.cycle/2) {/*先加速*/
+						_self.speeding -= _self.xdelta;
+					}
+				}
+				if(_self.speeding < _self.maxspeed) {/*限定最高速度*/
+					_self.speeding = _self.maxspeed;
+				}
+				if(cycler > _self.options.cycle) {/*超过基础循环次数后减速*/
+					_self.speeding += _self.xdelta;
+					//console.log(_self.counter, cycler, _self.speeding, 'redu');
+				}
+				_self.options.direction ? _self.current-- : _self.current++;/*转动方向*/
+				if(_self.current > _self.options.count) {
+					_self.current = 1;
+				} else if(_self.current < 1){
+					_self.current = _self.options.count;
+				}
+				/*停止的条件*/
+				if(_self.speeding > _self.options.speedEnd && _self.current == _self.options.hitpos+1) {
+					try{clearTimeout(_self.timer)}catch(e){}
+					_self.timer = null;
+					_self.rolling = !1;
+					_self.counter = 0;
+					$(_self.$rollers).removeClass(_self.options.activeClass).filter('.'+_self.options.rollerClass+'-'+_self.current).addClass(_self.options.activeClass);
+					if(typeof _self.options.callback == 'function') {_self.options.callback()}
+					return;
+				}
+				roll();
+			}, _self.speeding);
+		}
+		if(_self.options.hitpos < 1) {
+			return false;
+		}
+		_self.rolling = !0;/*标记为进行中*/
+		roll();
+	},
+	stop: function() {/*平滑停止run*/
+		this.counter = Math.ceil(this.options.cycle/2)*this.options.count;
+	}
+}

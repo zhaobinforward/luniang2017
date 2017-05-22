@@ -1,81 +1,330 @@
 'use strict';
-/* roller */
-function iRoller(options) {
-	this.defaults = {
-		inipos: -1,/*≥ı ºÀ˜“˝Œª÷√,¥”0ø™ º*/
-		count: 8,
-		speed: 200,/*≥ı º◊™∂ØÀŸ∂»*/
-		speedEnd: 300,/*Ω· ¯◊™∂ØÀŸ∂»*/
-		speedType: 'linear',/*ÀŸ∂»¿‡–Õ, linear:‘»ÀŸ,easing-in:œ»º”ÀŸ∫ÛºıÀŸ*/
-		hitpos: 0,/*√¸÷–Œª÷√,¥”0ø™ º*/
-		cycle: 10,/*ª˘¥°—≠ª∑¥Œ ˝*/
+var roller;
+$(function(){
+	$(document).on(touchSupport()?'touchstart':'mousedown', '*[clickbtn="true"]', function(){
+		$(this).addClass('clickbtn');
+	}).on(touchSupport()?'touchend':'mouseup', '*[clickbtn="true"]', function(){
+		$(this).removeClass('clickbtn');
+	});
+	$('.s-download').click(function(){
+		var idx = $('.s-download').index(this);
+		if($('.s-download').eq(idx).attr('ajaxing')) {
+			return;
+		}
+		$('.s-download').eq(idx).attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				$('.tryleft-info').html('Ââ©‰ΩôÊ¨°Êï∞Ôºö'+resp.data.residue_times+'Ê¨°');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.s-download').eq(idx).removeAttr('ajaxing')}
+		});
+	});
+	$('.anchor-share-weibo').click(function(){
+		share_weibo();
+		if($('.anchor-share-weibo').attr('ajaxing')) {
+			return;
+		}
+		$('.anchor-share-weibo').attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				$('.tryleft-info').html('Ââ©‰ΩôÊ¨°Êï∞Ôºö'+resp.data.residue_times+'Ê¨°');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.anchor-share-weibo').removeAttr('ajaxing')}
+		});
+	});
+	$('.anchor-share-qzone').click(function(){
+		share_qzone();
+		if($('.anchor-share-qzone').attr('ajaxing')) {
+			return;
+		}
+		$('.anchor-share-qzone').attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				$('.tryleft-info').html('Ââ©‰ΩôÊ¨°Êï∞Ôºö'+resp.data.residue_times+'Ê¨°');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.anchor-share-qzone').removeAttr('ajaxing')}
+		});
+	});
+	$('.share-qzone').click(function(){
+		var idx = $('.share-qzone').index(this);
+	});
+	$('.share-weibo').click(function(){
+		var idx = $('.share-weibo').index(this);
+	});
+	getInitInfo(function(data){$('.tryleft-info').html('Ââ©‰ΩôÊ¨°Êï∞Ôºö'+data.residue_times+'Ê¨°')});
+	roller = new iRoller({
+		cycle: 1,
+		hitpos: -1,
+		speed: 150,
+		speedEnd: 300,
+		speedType: 'easing-in',
 		rollerClass: 'roller',
 		activeClass: 'active',
-		direction: 0,/*0À≥ ±’Î,1ƒÊ ±’Î*/
-		callback: function(){}/*ªÿµ˜∫Ø ˝*/
-	};
-	this.options = $.extend(this.defaults, options || {}),/* initial params */
-	this.$rollers,
-	this.timer,
-	this.current;/*µ±«∞÷∏’Î,¥”1ø™ º*/
-	this.rolling;
-	this.paused;
-	this.init();
+		count: 10
+	});
+	$('.anchor-download').click(function(){iScrollTo('download')});
+	$('.anchor-lottery').click(function(){iScrollTo('lottery')});
+	$('#lottery-btn').click(function(){lottery()});
+	$('.name-list').slide({mainCell:'.name-list-inner ul',autoPlay:true,effect:'topMarquee',vis:5,interTime:50,opp:false,pnLoop:true,trigger:'click',mouseOverStop:true});
+	
+	$('form[ajaxform="true"]').ajaxForm({
+        dataType: 'json',
+		timeout: 3000,
+        beforeSubmit: function (data, form) {
+            var realname, telnumber, email, addr;
+			
+			var isemail = function($email) {
+				return $email.length > 6 && $email.length <= 32 && /^([A-Za-z0-9\-_.+]+)@([A-Za-z0-9\-]+[.][A-Za-z0-9\-.]+)$/i.test($email);
+			}
+			
+            if($(form).find('input[name="realname"]').size() > 0) {
+                realname = $.trim($(form).find('input[name="realname"]').val());
+            } else {
+				realname = '';
+			}
+			if (realname.length < 1) {
+				alert('Ê≤°ÊúâÂ°´ÂÜôÂßìÂêç');
+				return false;
+			}
+			
+			if($(form).find('input[name="telnumber"]').size() > 0) {
+                telnumber = $.trim($(form).find('input[name="telnumber"]').val());
+            } else {
+				telnumber = '';
+			}
+			if(telnumber.length < 1) {
+				alert('Ê≤°ÊúâÂ°´ÂÜôÁîµËØù');
+				return false;
+			} else if(!/^1[34578]{1}\d{9}$/i.test(telnumber)) {
+				alert('ÁîµËØùÊ†ºÂºè‰∏çÊ≠£Á°Æ(Â∫îÁî±11~13‰ΩçÊï∞Â≠óÁªÑÊàê)');
+				return false;
+			}
+			
+			if($(form).find('input[name="email"]').size() > 0) {
+                email = $.trim($(form).find('input[name="email"]').val());
+            } else {
+				email = '';
+			}
+			if(email.length < 1) {
+				alert('Ê≤°ÊúâÂ°´ÂÜôÈÇÆÁÆ±');
+				return false;
+			} else if(!isemail(email)) {
+				alert('ÈÇÆÁÆ±Ê†ºÂºè‰∏çÊ≠£Á°Æ');
+				return false;
+			}
+			
+            if($(form).find('input[name="addr"]').size() > 0) {
+                addr = $.trim($(form).find('input[name="addr"]').val());
+            } else {
+				addr = '';
+			}
+			if(addr.length < 1) {
+				alert('Ê≤°ÊúâÂ°´ÂÜôÂú∞ÂùÄ');
+				return false;
+			}
+        },
+        success: function (resp) {
+            if (typeof resp != 'object') {
+                try {
+                    resp = JSON.parse(resp);
+                } catch (e) {
+					alert('ÂìçÂ∫îÂ§±Ë¥•');
+                    return;
+                }
+            }
+			resp.errno = parseInt(resp.errno);
+            if(resp.errno == 0) {//save success
+				$(window).unbind('beforeunload');
+				alert(resp.errmsg);
+				/*ÊòØÂê¶ÈúÄË¶ÅÂÖ≥Èó≠formË°®Âçï*/
+                return;
+            }
+			alert(resp.errmsg);
+        },
+        error: function () {
+            alert('ÂìçÂ∫îÂ§±Ë¥•');
+            return;
+        },
+        complete: function (XMLHttpRequest, status) {
+            if(status == 'timeout') {
+				alert('ËØ∑Ê±ÇË∂ÖÊó∂');
+				return;
+            }
+        }
+    });
+});
+
+function getInitInfo(call) {
+	var call = typeof call == 'function' ? call : function(){};
+	ajaxprocess({
+		type: 'get',
+		url: 'ajax/lotteryTimes.php',
+		data: {},
+		dataType: 'json',
+		success: function(resp) {
+			call(resp.data);
+		},
+		error: function() {
+			console.log('exec getInitInfo() eror');
+		},
+		complete: function(){}
+	});
 }
-iRoller.prototype = {
-	init: function() {
-		this.$rollers = $('.' + this.options.rollerClass);
-		this.current = this.options.inipos < 0 || this.options.inipos > this.options.count - 1 ? 1 : this.options.inipos+1;
-		this.rolling = !1;
-		$(this.$rollers).removeClass(this.options.activeClass).filter('.'+this.options.rollerClass+'-'+this.options.inipos+1).addClass(this.options.activeClass);
-	},
-	run: function(options) {
-		var _self = this;
-		_self.options = $.extend(_self.options, options || {});/* initial params */
-		var speed = _self.options.speed;
-		var counter = 0;
-		var cycle = 0;
-		var roll = function() {
-			counter++;
-			cycle = parseInt(counter/_self.options.count);
-			$(_self.$rollers).removeClass(_self.options.activeClass).filter('.'+_self.options.rollerClass+'-'+_self.current).addClass(_self.options.activeClass);
-			_self.timer = setTimeout(function(){
-				if(_self.options.speedType == 'linear') {
-				} else {
-					if(cycle < _self.options.cycle/2) {/*œ»º”ÀŸ*/
-						speed -= 20;
-					} else if(cycle <= _self.options.cycle) {/*∫ÛºıÀŸ*/
-						speed += 20;
-					}
-				}
-				if(speed < 40) {/*œﬁ∂®◊Ó∏ﬂÀŸ∂»*/
-					speed = 40;
-				}
-				if(cycle > _self.options.cycle) {/*≥¨π˝ª˘¥°—≠ª∑¥Œ ˝∫ÛºıÀŸ*/
-					speed += 20;
-				}
-				_self.options.direction ? _self.current-- : _self.current++;/*◊™∂Ø∑ΩœÚ*/
-				if(_self.current > _self.options.count) {
-					_self.current = 1;
-				} else if(_self.current < 1){
-					_self.current = _self.options.count;
-				}
-				/*Õ£÷πµƒÃıº˛*/
-				if(speed > _self.options.speedEnd && _self.current == _self.options.hitpos+1) {
-					try{clearTimeout(_self.timer)}catch(e){}
-					_self.timer = null;
-					_self.rolling = !1;
-					$(_self.$rollers).removeClass(_self.options.activeClass).filter('.'+_self.options.rollerClass+'-'+_self.current).addClass(_self.options.activeClass);
-					if(typeof _self.options.callback == 'function') {_self.options.callback()}
-					return;
-				}
-				roll();
-			}, speed);
-		}
-		if(_self.hitpos<1) {
-			return false;
-		}
-		_self.rolling = !0;/*±Íº«Œ™Ω¯––÷–*/
-		roll();
+
+function iScrollTo(anchor, timeout) {
+	var anchor = anchor || 'download';
+	var timeout = timeout || 1250;
+	var offsetY = 0;
+	switch(anchor) {
+		case 'download':
+			offsetY = $('.main-cont').offset().top;break;
+		case 'lottery':
+			offsetY = $('.lottery-cont').offset().top;break;
+		default :
+		offsetY = $('.main-cont').offset().top;
 	}
+	$('html, body').animate({scrollTop: offsetY}, timeout);
+	$(document).mousedown(function(){$('html, body').stop()});
+	try {
+		document.addEventListener('DOMMouseScroll',function(){$('html, body').stop()},false);
+	}catch(e){}
+	try {
+		document.onmousewheel = function(){$('html, body').stop()}
+	}catch(e){}
+}
+
+function getPosByAwardType(atype) {
+	var atype = atype || '0';
+	var ords = [];
+	$('.roller-wrap>.roller[atype="'+atype+'"]').each(function(){
+		ords.push(parseInt($(this).attr('ord')));
+	});
+	var $size = $(ords).size();
+	var rand = Math.floor(Math.random()*(($size-1)-0+1)+0);
+	return ords[rand>=$size?($size-1):rand];
+}
+
+function showResult(award, hited, notryleft) {
+	var award = award || {};
+	var hited = hited || false;
+	var notryleft = notryleft || false;
+	if(hited) {
+		$('.popbox-cover').css({
+			width:Math.max($(window).width(),$(document).width())+'px',
+			height:Math.max($(window).height(),$(document).height())+'px'
+		}).unbind('click').bind('click', function(){
+			$(this).unbind('click').hide();
+			$('#hited.popbox-wrap, .popbox-cover').hide()
+		});
+		$('#hited.popbox-wrap, .popbox-cover').show();
+	} else if(notryleft) {
+		$('.popbox-cover').css({
+			width:Math.max($(window).width(),$(document).width())+'px',
+			height:Math.max($(window).height(),$(document).height())+'px'
+		}).unbind('click').bind('click', function(){
+			$(this).unbind('click').hide();
+			$('#no-tryleft.popbox-wrap, .popbox-cover').hide()
+		});
+		$('#no-tryleft.popbox-wrap, .popbox-cover').show();
+	} else if($.isEmptyObject(award)) {
+		$('.popbox-cover').css({
+			width:Math.max($(window).width(),$(document).width())+'px',
+			height:Math.max($(window).height(),$(document).height())+'px'
+		}).unbind('click').bind('click', function(){
+			$(this).unbind('click').hide();
+			$('#not-hits.popbox-wrap, .popbox-cover').hide()
+		});
+		$('#not-hits.popbox-wrap, .popbox-cover').show();
+	} else {/*hits*/
+		$(window).bind('beforeunload',function(){return 'Â∞öÊú™Êèê‰∫§È¢ÜÂ•ñ‰ø°ÊÅØ'});
+		$('#hits .popbox-title').html('ÊÅ≠ÂñúÊäΩ‰∏≠'+award.prize_name);
+		$('.popbox-cover').css({
+			width:Math.max($(window).width(),$(document).width())+'px',
+			height:Math.max($(window).height(),$(document).height())+'px'
+		}).unbind('click');
+		$('.popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
+			if(window.confirm('Â∞öÊú™Êèê‰∫§È¢ÜÂ•ñ‰ø°ÊÅØÔºåÁ°ÆËÆ§Ë¶ÅÂÖ≥Èó≠ÂêóÔºü')) {
+				$('#hits.popbox-wrap, .popbox-cover').hide();
+				iScrollTo('lottery');
+			}
+		});
+		$('#hits.popbox-wrap, .popbox-cover').show();
+	}
+}
+
+function lottery(before, after) {
+	var before = typeof before == 'function' ? before : function(){};
+	var after = typeof after == 'function' ? after : function(){};
+	if(roller.rolling) {
+		return;
+	}
+	if($('#lottery-btn').attr('ajaxing')) {
+		return;
+	}
+	$('#lottery-btn').attr('ajaxing', true);
+	ajaxprocess({
+		type: 'post',
+		url: 'ajax/lottery.php',
+		data: {},
+		dataType: 'json',
+		success: function(resp) {
+			console.log(resp);
+			if(resp.errno == 2) {/*hited*/
+				showResult({}, true, false);
+			} else if(resp.errno == 4 || resp.errno == 3) {/*no-tryleft*/
+				showResult({}, false, true);
+				$('.tryleft-info').html('Ââ©‰ΩôÊ¨°Êï∞Ôºö0Ê¨°');
+			} else {/*none*/
+				var hitpos;
+				if(resp.errno == 1) {/*hits*/
+					hitpos = getPosByAwardType(resp.data.prize_type)-1;
+				} else {
+					hitpos = getPosByAwardType('0')-1;
+				}
+				$('.lottert-btn .lottert-btn-inner').removeClass('ani');
+				roller.run({
+					cycle: 1+Math.floor(Math.random()*(2-1+1)+1),/*Math.floor(Math.random()*(max-min+1)+min)*/
+					hitpos: hitpos,
+					callback: function() {
+						$('.lottert-btn .lottert-btn-inner').addClass('ani');
+						if(resp.errno == 1) {
+							showResult({prize_type:resp.data.prize_type,prize_name:resp.data.prize_name}, false, false);
+						} else {
+							showResult({}, false, false);
+						}
+						$('.tryleft-info').html('Ââ©‰ΩôÊ¨°Êï∞Ôºö'+resp.data.residue_times+'Ê¨°');
+					}
+				});
+			}
+		},
+		error: function() {
+			console.log('lottery ajax error');
+			var hitpos = getPosByAwardType('0')-1;
+			roller.run({
+				cycle: 1+Math.floor(Math.random()*(2-1+1)+1),
+				hitpos: hitpos,
+				callback: function() {
+					
+				}
+			});
+		},
+		complete: function(){
+			$('#lottery-btn').removeAttr('ajaxing');
+		}
+	});
 }

@@ -1,12 +1,12 @@
 var dataForShare = {
-    title: 'Â¹Äï´øÄã´òÆÆ´ÎÔª±Ú',
-    content: 'Â¹Äï´øÄã´òÆÆ´ÎÔª±Ú~',
+    title: 'é¹¿å¨˜å¸¦ä½ æ‰“ç ´æ¬¡å…ƒå£',
+    content: 'é¹¿å¨˜å¸¦ä½ æ‰“ç ´æ¬¡å…ƒå£~',
     imgurl: 'http://shouji.sogou.com/sapp/luniang2017/static/i/sharepic.jpg',
     contenturl: 'http://shouji.sogou.com/sapp/luniang2017/?f=weibo'
 }
 var dataForWeixinShare = {
-    title: 'Â¹Äï´øÄã´òÆÆ´ÎÔª±Ú',
-    content: 'Â¹Äï´øÄã´òÆÆ´ÎÔª±Ú~',
+    title: 'é¹¿å¨˜å¸¦ä½ æ‰“ç ´æ¬¡å…ƒå£',
+    content: 'é¹¿å¨˜å¸¦ä½ æ‰“ç ´æ¬¡å…ƒå£~',
     imgurl: 'http://shouji.sogou.com/sapp/luniang2017/static/i/sharepic.jpg',
     contenturl: 'http://shouji.sogou.com/sapp/luniang2017/?f=wechat'
 }
@@ -42,7 +42,6 @@ function show_share() {
         );
         return true;
     }
-	
 	var hide = function() {
 		$('#menu-share,#share-cover').hide();
 	}
@@ -85,25 +84,25 @@ function show_weixin_share() {
 		$('#'+bgId).unbind(touchSupport()?'touchend':'click').remove();
 	}
 	show();
-	try{MtaH5.clickStat('37')/*·ÖÏíÎ¢ĞÅ°´Å¥*/}catch(e){}
+	try{MtaH5.clickStat('37')/*åˆ†äº«å¾®ä¿¡æŒ‰é’®*/}catch(e){}
 }
 function share_weibo() {
-    try{MtaH5.clickStat('20')/*·ÖÏíÎ¢²©°´Å¥*/}catch(e){}
-    /*·ÖÏíÎ¢²©°´Å¥*/
+    try{MtaH5.clickStat('20')/*åˆ†äº«å¾®åšæŒ‰é’®*/}catch(e){}
+    /*åˆ†äº«å¾®åšæŒ‰é’®*/
     var _t = dataForShareTmp.content + ' ' + dataForShareTmp.contenturl;
     window.open('http://v.t.sina.com.cn/share/share.php?title=' + encodeURIComponent(_t) + '&pic=' + encodeURIComponent(dataForShareTmp.imgurl) + '&source=bookmark', '_blank', 'width=450,height=400');
 }
 function share_qzone() {
-    try{MtaH5.clickStat('21')/*·ÖÏí¿Õ¼ä°´Å¥*/}catch(e){}
-    /*·ÖÏí¿Õ¼ä°´Å¥*/
+    try{MtaH5.clickStat('21')/*åˆ†äº«ç©ºé—´æŒ‰é’®*/}catch(e){}
+    /*åˆ†äº«ç©ºé—´æŒ‰é’®*/
     var p = {
         url: dataForQzoneShareTmp.contenturl,
-        showcount: '0', /*ÊÇ·ñÏÔÊ¾·ÖÏí×ÜÊı,ÏÔÊ¾£º'1'£¬²»ÏÔÊ¾£º'0' */
-        desc: '', /*Ä¬ÈÏ·ÖÏíÀíÓÉ(¿ÉÑ¡)*/
-        summary: dataForQzoneShareTmp.content, /*·ÖÏíÕªÒª(¿ÉÑ¡)*/
-        title: dataForQzoneShareTmp.title, /*·ÖÏí±êÌâ(¿ÉÑ¡)*/
-        site: '\u641c\u72d7\u8f93\u5165\u6cd5', /*·ÖÏíÀ´Ô´ Èç£ºÌÚÑ¶Íø(¿ÉÑ¡)*/
-        pics: dataForQzoneShareTmp.imgurl, /*·ÖÏíÍ¼Æ¬µÄÂ·¾¶(¿ÉÑ¡)*/
+        showcount: '0', /*æ˜¯å¦æ˜¾ç¤ºåˆ†äº«æ€»æ•°,æ˜¾ç¤ºï¼š'1'ï¼Œä¸æ˜¾ç¤ºï¼š'0' */
+        desc: '', /*é»˜è®¤åˆ†äº«ç†ç”±(å¯é€‰)*/
+        summary: dataForQzoneShareTmp.content, /*åˆ†äº«æ‘˜è¦(å¯é€‰)*/
+        title: dataForQzoneShareTmp.title, /*åˆ†äº«æ ‡é¢˜(å¯é€‰)*/
+        site: '\u641c\u72d7\u8f93\u5165\u6cd5', /*åˆ†äº«æ¥æº å¦‚ï¼šè…¾è®¯ç½‘(å¯é€‰)*/
+        pics: dataForQzoneShareTmp.imgurl, /*åˆ†äº«å›¾ç‰‡çš„è·¯å¾„(å¯é€‰)*/
         style: '203',
         width: 22,
         height: 22
