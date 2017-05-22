@@ -247,7 +247,6 @@ class nMysql {
 		if($this->m_link == 0) {
 			$this->_initconnection();
 		}
-		error_log($sql,3,"/tmp/sqlxxxx.log");
 		return @mysqli_query($this->m_link , $sql) ? ($return_insert_id ? @mysqli_insert_id($this->m_link) : 1) : 0;
 	}
 	
