@@ -30,6 +30,7 @@ function gen_uuid() {
 		$uuid = $_COOKIE['uuid'];
 	} else if(isset($_SESSION['uuid']) && strlen($_SESSION['uuid']) > 0) {
 		$uuid = $_SESSION['uuid'];
+		ssetcookie('uuid', $uuid);
 	} else {
 		$uuid = create_guid();
 		$_SESSION['uuid'] = $uuid;
