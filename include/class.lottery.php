@@ -46,7 +46,7 @@ interface LotteryIf
 
 class Lottery implements LotteryIf{
 
-    const LUCK_PROBABILITY = 10;//中奖概率
+    const LUCK_PROBABILITY = 10000;//中奖基数
     const UNPRIZE = 0;//未中奖
     const PRIZED_NO_USERINFO = 1;//中奖还没填中奖信息
     const PRIZED_HAS_USERINFO = 2;//中奖已填中奖信息
@@ -54,15 +54,17 @@ class Lottery implements LotteryIf{
     const USE_CHANGES = 2;
     const LOG_ON = TRUE;
 
+
+
     public static $prizeTypeArr = array(
-        '1' => '网易漫画一个月VIP(10元)',
-        '2' => '网易漫画三个月VIP(30元)',
-        '3' => '鹿娘春日福袋：鹿娘钥匙扣+动漫卡贴(50元)',
-        '4' => '动漫抱枕(66元)',
-        '5' => '《中国怪谈》单行本(68元)',
-        '6' => '《中国怪谈》趣味福袋：卷纸+钥匙扣(78元)',
-        '7' => '鹿娘保温杯(128元)',
-        '8' => '《中国怪谈》T恤(138元)',
+        '1' => '网易漫画1个月VIP',
+        '2' => '网易漫画3个月VIP',
+        '3' => '鹿娘春日福袋（鹿娘钥匙扣+动漫卡贴）',
+        '4' => '《中国怪谈》趣味福袋（卷纸+钥匙扣）',
+        '5' => '动漫抱枕',
+        '6' => '《中国怪谈》单行本',
+        '7' => '鹿娘保温杯',
+        '8' => '《中国怪谈》T恤',
     );
 
     public static $prizeStatusMessage  = array(
@@ -72,6 +74,26 @@ class Lottery implements LotteryIf{
         '3' => '没有抽奖机会，请分享或下载皮肤获取抽奖机会',
         '4' => '今日抽奖机会已用完，明天再来哦^.^',
         '5' => '今日奖品已抽完,明天再来哦^.^',
+    );
+
+    //中奖率
+    public static $prizeRatioArr = array(
+//        '1' => '0.0015',
+//        '2' => '0.0003',
+//        '3' => '0.0002',
+//        '4' => '0.0003',
+//        '5' => '0.0001',
+//        '6' => '0.0002',
+//        '7' => '0.0001',
+//        '8' => '0.0001',
+       '1' => '0.15',
+       '2' => '0.03',
+       '3' => '0.02',
+       '4' => '0.03',
+       '5' => '0.01',
+       '6' => '0.02',
+       '7' => '0.01',
+       '8' => '0.01',
     );
 
     private $_MDB;
@@ -176,23 +198,42 @@ class Lottery implements LotteryIf{
         $iResidueTimes = 0;
         if($aLotteryTimes['residue_times'] > 0){//有抽奖机会
             $iRand = rand(0,self::LUCK_PROBABILITY);
-            switch($iRand){//中奖
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 6:
-                case 7:
-                case 8:
-                    if($sStatus != 2){
-                        $aPrize = $this->_genPrizeByPrizeType($iRand);
-                    }
-                    break;
-                default:
-                    break;
+            $aAreas = $this->_genPrizeArea(self::$prizeRatioArr);
+            $iPrizeType = 0;
+            $sArea = ($aAreas[8]['last']+1)."-".self::LUCK_PROBABILITY;
+            if($iRand >= $aAreas[1]['first'] &&  $iRand <= $aAreas[1]['last']){
+                $iPrizeType = 1;
+                $sArea = $aAreas[1]['first']."-".$aAreas[1]['last'];
+            }elseif($iRand >= $aAreas[2]['first'] &&  $iRand <= $aAreas[2]['last']){
+                $iPrizeType = 2;
+                $sArea = $aAreas[2]['first']."-".$aAreas[2]['last'];
+            }elseif($iRand >= $aAreas[3]['first'] &&  $iRand <= $aAreas[3]['last']){
+                $iPrizeType = 3;
+                $sArea = $aAreas[3]['first']."-".$aAreas[3]['last'];
+            }elseif($iRand >= $aAreas[4]['first'] &&  $iRand <= $aAreas[4]['last']){
+                $iPrizeType = 4;
+                $sArea = $aAreas[4]['first']."-".$aAreas[4]['last'];
+            }elseif($iRand >= $aAreas[5]['first'] &&  $iRand <= $aAreas[5]['last']){
+                $iPrizeType = 5;
+                $sArea = $aAreas[5]['first']."-".$aAreas[5]['last'];
+            }elseif($iRand >= $aAreas[6]['first'] &&  $iRand <= $aAreas[6]['last']){
+                $iPrizeType = 6;
+                $sArea = $aAreas[6]['first']."-".$aAreas[6]['last'];
+            }elseif($iRand >= $aAreas[7]['first'] &&  $iRand <= $aAreas[7]['last']){
+                $iPrizeType = 7;
+                $sArea = $aAreas[7]['first']."-".$aAreas[7]['last'];
+            }elseif($iRand >= $aAreas[8]['first'] &&  $iRand <= $aAreas[8]['last']){
+                $iPrizeType = 8;
+                $sArea = $aAreas[8]['first']."-".$aAreas[8]['last'];
             }
+
+            if($sStatus != 2 && $iPrizeType!=0){
+                $aPrize = $this->_genPrizeByPrizeType($iPrizeType);
+            }
+
+            $aLog['prize_type'] = $iPrizeType;
             $aLog['ratio'] = $iRand;
+            $aLog['area'] = $sArea;
 
             $iResidueTimes = $this->updateLotteryTimes($sUuid, self::USE_CHANGES);
             if(!empty($aPrize)){
@@ -201,7 +242,6 @@ class Lottery implements LotteryIf{
                 $aData['prize_type'] = $iRand;
                 $aData['prize_name'] = $aPrize['prize_name'];
 
-                $aLog['reward_type'] = $iRand;
                 $aLog['reward_name'] = $aPrize['prize_name'];
                 $aLog['reward_id'] = $aPrize['id'];
                 $this->_MDB->Query($sSql);
@@ -283,6 +323,7 @@ class Lottery implements LotteryIf{
         $aRes = array();
         foreach($aPrizes as $k=>$v){
             $aTmp = array();
+            $aTmp['id'] = $v['id'];
             $aTmp['user_name'] = $aUidArr[$v['uuid']]['user_name'];
             $aTmp['user_phone'] = $aUidArr[$v['uuid']]['user_phone'];
             $aTmp['prize_name'] = $v['prize_name'];
@@ -379,5 +420,25 @@ class Lottery implements LotteryIf{
         return $sValue;
     }
 
+
+    /*
+     * 返回中奖区间
+     * @param $aPrizeRation array 各个产品的中奖率
+     * @param $iBaseNum int 概率基数
+     * return array
+     * */
+    private function _genPrizeArea($aPrizeRatio){
+        $iTmp = 1;
+        $aRes = array();
+        foreach($aPrizeRatio as $k=>$v){
+            $aTemp = array();
+            $aTemp['first'] = $iTmp;
+            $aTemp['last'] = $iTmp + $v * self::LUCK_PROBABILITY;
+            $iTmp += $v * self::LUCK_PROBABILITY + 1;
+            $aRes[$k] = $aTemp;
+        }
+        return $aRes;
+
+    }
 
 }

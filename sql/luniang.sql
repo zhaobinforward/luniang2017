@@ -29,12 +29,13 @@ create table `luniang_2017_user`(
 CREATE TABLE `luniang_2017_log` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `reward_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `reward_type` int(10) unsigned NOT NULL DEFAULT '0',
   `reward_name` varchar(100) NOT NULL DEFAULT '',
   `uuid` varchar(100) NOT NULL DEFAULT '',
   `ratio` varchar(12) NOT NULL default '',
   `return_info` varchar(255) NOT NULL DEFAULT '',
   `return_code` tinyint(3) NOT NULL DEFAULT '0',
+  `prize_type` int(11) NOT NULL DEFAULT '0',
+  `area` varchar(100) NOT NULL DEFAULT '',
   `create_time` int(10) unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
