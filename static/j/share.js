@@ -1,25 +1,25 @@
 var dataForShare = {
-    title: '鹿娘带你打破次元壁',
-    content: '鹿娘带你打破次元壁~',
+    title: '',
+    content: '#有一份儿童节礼物待领取# 搜哥携手鹿娘@网易漫画 送儿童节礼物喽~十二款热门漫画皮肤已经在@搜狗输入法 平台上线啦！换肤就可抽奖赢取精美周边好礼哟！',
     imgurl: 'http://shouji.sogou.com/sapp/luniang2017/static/i/sharepic.jpg',
     contenturl: 'http://shouji.sogou.com/sapp/luniang2017/?f=weibo'
 }
 var dataForWeixinShare = {
-    title: '鹿娘带你打破次元壁',
-    content: '鹿娘带你打破次元壁~',
+    title: '有一份儿童节礼物待领取！',
+    content: '搜哥携手鹿娘送儿童节礼物喽~十二款热门漫画皮肤已经在搜狗输入法平台上线啦！换肤就可抽奖赢取精美周边好礼哟！',
     imgurl: 'http://shouji.sogou.com/sapp/luniang2017/static/i/sharepic.jpg',
     contenturl: 'http://shouji.sogou.com/sapp/luniang2017/?f=wechat'
 }
 var dataForQzoneShare = {
-    title: dataForShare.title,
-    content: dataForShare.content,
-    imgurl: dataForShare.imgurl,
+    title: dataForWeixinShare.title,
+    content: dataForWeixinShare.content,
+    imgurl: dataForWeixinShare.imgurl,
     contenturl: 'http://shouji.sogou.com/sapp/luniang2017/?f=qzone'
 }
 var dataForAppShare = {
-	title: dataForShare.title,
-    content: dataForShare.content,
-    imgurl: dataForShare.imgurl,
+	title: dataForWeixinShare.title,
+    content: dataForWeixinShare.content,
+    imgurl: dataForWeixinShare.imgurl,
     contenturl: 'http://shouji.sogou.com/sapp/luniang2017/index.html?f=appshare'
 }
 var dataForShareTmp = {};
