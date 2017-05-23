@@ -239,7 +239,7 @@ class Lottery implements LotteryIf{
             if(!empty($aPrize)){
                 $sStatus = 1 ;
                 $sSql = "update luniang_2017_prize set uuid='".$sUuid."',status='1',lottery_time='".time()."' where id=".$aPrize['id'];
-                $aData['prize_type'] = $iRand;
+                $aData['prize_type'] = $iPrizeType;
                 $aData['prize_name'] = $aPrize['prize_name'];
 
                 $aLog['reward_name'] = $aPrize['prize_name'];
@@ -308,6 +308,9 @@ class Lottery implements LotteryIf{
         $sSql = "select * from luniang_2017_prize where status='".self::PRIZED_HAS_USERINFO."' order by id desc limit $iOffset,200";
         $oQuery = $this->_MDB->Query($sSql);
         $aPrizes = $this->_MDB->FetchAll($oQuery);
+        if(empty($aPrizes)){
+            return array();
+        }
         $sUuids = '(\'';
         foreach($aPrizes as $k=>$v){
             $sUuids .= $v['uuid'].'\',';
