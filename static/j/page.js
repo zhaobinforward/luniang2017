@@ -8,6 +8,7 @@ $(function(){
 	});
 	$('.s-download').click(function(){
 		var idx = $('.s-download').index(this);
+		try{MtaH5.clickStat(51+idx)}catch(e){}
 		if($('.s-download').eq(idx).attr('ajaxing')) {
 			return;
 		}
@@ -22,6 +23,46 @@ $(function(){
 			},
 			error: function() {console.log('updateLotteryTimes ajax error')},
 			complete: function(){$('.s-download').eq(idx).removeAttr('ajaxing')}
+		});
+	});
+	$('.share-weibo').click(function(){
+		share_weibo();
+		var idx = $('.share-weibo').index(this);
+		try{MtaH5.clickStat(71+idx)}catch(e){}
+		if($('.share-weibo').eq(idx).attr('ajaxing')) {
+			return;
+		}
+		$('.share-weibo').eq(idx).attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.share-weibo').eq(idx).removeAttr('ajaxing')}
+		});
+	});
+	$('.share-qzone').click(function(){
+		share_qzone();
+		var idx = $('.share-qzone').index(this);
+		try{MtaH5.clickStat(91+idx)}catch(e){}
+		if($('.share-qzone').eq(idx).attr('ajaxing')) {
+			return;
+		}
+		$('.share-qzone').eq(idx).attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.share-qzone').eq(idx).removeAttr('ajaxing')}
 		});
 	});
 	$('.anchor-share-weibo').click(function(){
@@ -60,44 +101,6 @@ $(function(){
 			complete: function(){$('.anchor-share-qzone').removeAttr('ajaxing')}
 		});
 	});
-	$('.share-weibo').click(function(){
-		share_weibo();
-		var idx = $('.share-weibo').index(this);
-		if($('.share-weibo').eq(idx).attr('ajaxing')) {
-			return;
-		}
-		$('.share-weibo').eq(idx).attr('ajaxing', true);
-		ajaxprocess({
-			type: 'post',
-			url: 'ajax/updateLotteryTimes.php',
-			data: {},
-			dataType: 'json',
-			success: function(resp) {
-				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
-			},
-			error: function() {console.log('updateLotteryTimes ajax error')},
-			complete: function(){$('.share-weibo').eq(idx).removeAttr('ajaxing')}
-		});
-	});
-	$('.share-qzone').click(function(){
-		share_qzone();
-		var idx = $('.share-qzone').index(this);
-		if($('.share-qzone').eq(idx).attr('ajaxing')) {
-			return;
-		}
-		$('.share-qzone').eq(idx).attr('ajaxing', true);
-		ajaxprocess({
-			type: 'post',
-			url: 'ajax/updateLotteryTimes.php',
-			data: {},
-			dataType: 'json',
-			success: function(resp) {
-				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
-			},
-			error: function() {console.log('updateLotteryTimes ajax error')},
-			complete: function(){$('.share-qzone').eq(idx).removeAttr('ajaxing')}
-		});
-	});
 	getInitInfo(function(data){$('.tryleft-info').html('剩余次数：'+data.residue_times+'次')});
 	roller = new iRoller({
 		cycle: 1,
@@ -109,9 +112,21 @@ $(function(){
 		activeClass: 'active',
 		count: 10
 	});
-	$('.anchor-download').click(function(){iScrollTo('download')});
-	$('.anchor-lottery').click(function(){iScrollTo('lottery')});
-	$('#lottery-btn').click(function(){lottery()});
+	$('.anchor-download').click(function(){
+		try{MtaH5.clickStat('5')}catch(e){}
+		iScrollTo('download');
+	});
+	$('.anchor-lottery').click(function(){
+		try{MtaH5.clickStat('6')}catch(e){}
+		iScrollTo('lottery');
+	});
+	$('.anchor-manhua').mousedown(function(){
+		try{MtaH5.clickStat('7')}catch(e){}
+	});
+	$('#lottery-btn').click(function(){
+		try{MtaH5.clickStat('2')}catch(e){}
+		lottery();
+	});
 	
 	bindGetCounter();
 	
@@ -332,6 +347,7 @@ function lottery(before, after) {
 		return;
 	}
 	$('#lottery-btn').attr('ajaxing', true);
+	try{MtaH5.clickStat('3')}catch(e){}
 	ajaxprocess({
 		type: 'post',
 		url: 'ajax/lottery.php',
@@ -351,7 +367,6 @@ function lottery(before, after) {
 				} else {
 					hitpos = getPosByAwardType('0')-1;
 				}
-console.log(hitpos);
 				$('.lottert-btn .lottert-btn-inner').removeClass('ani');
 				roller.run({
 					cycle: 1+Math.floor(Math.random()*(2-1+1)+1),/*Math.floor(Math.random()*(max-min+1)+min)*/
@@ -369,6 +384,7 @@ console.log(hitpos);
 			}
 		},
 		error: function() {
+			try{MtaH5.clickStat('4')}catch(e){}
 			console.log('lottery ajax error');
 			var hitpos = getPosByAwardType('0')-1;
 			roller.run({

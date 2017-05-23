@@ -58,33 +58,11 @@ function show_share() {
 }
 var WXTIP_ST = null;
 function show_weixin_share() {
-	var winWidth = $(window).width();
-	var winHeight = $(window).height();
-	var eleId = 'dialog_weixin';
-	var bgId = eleId+'_cover';
-	
-	var show = function() {
-		$('#'+eleId).remove();
-		$('#'+bgId).remove();
-		$('body').append('<div id="'+bgId+'" class="menu_cover share_menu_cover"></div>');
-		$('body').append('<div id="'+eleId+'" class="dialog_weixin"></div>');
-		$('#'+eleId).unbind(touchSupport()?'touchend':'click').bind(touchSupport()?'touchend':'click',function(){hide()}).show();
-		$('#'+bgId).unbind(touchSupport()?'touchend':'click').bind(touchSupport()?'touchend':'click',function(){hide()});
-		try{clearTimeout(WXTIP_ST)}catch(e){}
-		//WXTIP_ST = setTimeout(function(){hide()}, 3000);
-		$('#'+bgId).css({
-			width:'100%',
-			height:Math.max(winHeight, $(document).height())+'px',
-			zIndex:998
-		});
-	}
-	var hide = function() {
-		try{clearTimeout(WXTIP_ST)}catch(e){}
-		$('#'+eleId).unbind(touchSupport()?'touchend':'click').hide().remove();
-		$('#'+bgId).unbind(touchSupport()?'touchend':'click').remove();
-	}
-	show();
-	try{MtaH5.clickStat('37')/*分享微信按钮*/}catch(e){}
+    $('.mask_share').show();
+	$('.mask_share').unbind('click').bind('click',function(){
+		$('.mask_share').hide();
+	});
+    try{MtaH5.clickStat('37')/*分享微信按钮*/}catch(e){}
 }
 function share_weibo() {
     try{MtaH5.clickStat('20')/*分享微博按钮*/}catch(e){}
