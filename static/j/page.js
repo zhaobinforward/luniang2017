@@ -63,10 +63,40 @@ $(function(){
 	$('.share-weibo').click(function(){
 		share_weibo();
 		var idx = $('.share-weibo').index(this);
+		if($('.share-weibo').eq(idx).attr('ajaxing')) {
+			return;
+		}
+		$('.share-weibo').eq(idx).attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.share-weibo').eq(idx).removeAttr('ajaxing')}
+		});
 	});
 	$('.share-qzone').click(function(){
 		share_qzone();
 		var idx = $('.share-qzone').index(this);
+		if($('.share-qzone').eq(idx).attr('ajaxing')) {
+			return;
+		}
+		$('.share-qzone').eq(idx).attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.share-qzone').eq(idx).removeAttr('ajaxing')}
+		});
 	});
 	getInitInfo(function(data){$('.tryleft-info').html('剩余次数：'+data.residue_times+'次')});
 	roller = new iRoller({
@@ -84,8 +114,6 @@ $(function(){
 	$('#lottery-btn').click(function(){lottery()});
 	
 	bindGetCounter();
-	
-	
 	
 	$('form[ajaxform="true"]').ajaxForm({
         dataType: 'json',
@@ -323,6 +351,7 @@ function lottery(before, after) {
 				} else {
 					hitpos = getPosByAwardType('0')-1;
 				}
+console.log(hitpos);
 				$('.lottert-btn .lottert-btn-inner').removeClass('ani');
 				roller.run({
 					cycle: 1+Math.floor(Math.random()*(2-1+1)+1),/*Math.floor(Math.random()*(max-min+1)+min)*/
@@ -377,7 +406,7 @@ function bindGetCounter() {
 							$('.name-ul').children().remove();
 							swiper = new Swiper('.swiper-container', {
 								direction: 'vertical',
-								loop: true,
+								loop: false,
 								slidesPerView: 5,
 								paginationClickable: true,
 								spaceBetween: 0,
