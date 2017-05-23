@@ -1,5 +1,5 @@
 'use strict';
-var roller;
+var roller,ajaxPollTimer=null,retrytime=30000,swiper;
 $(function(){
 	$(document).on(touchSupport()?'touchstart':'mousedown', '*[clickbtn="true"]', function(){
 		$(this).addClass('clickbtn');
@@ -80,7 +80,19 @@ $(function(){
 	$('.anchor-download').click(function(){iScrollTo('download')});
 	$('.anchor-lottery').click(function(){iScrollTo('lottery')});
 	$('#lottery-btn').click(function(){lottery()});
-	$('.name-list').slide({mainCell:'.name-list-inner ul',autoPlay:true,effect:'topMarquee',vis:5,interTime:50,opp:false,pnLoop:true,trigger:'click',mouseOverStop:true});
+	
+	bindGetCounter();
+	
+	swiper = new Swiper('.swiper-container', {
+		direction: 'vertical',
+		loop: true,
+        slidesPerView: 5,
+        paginationClickable: true,
+        spaceBetween: 0,
+		centeredSlides: false,
+        autoplay: 1500,
+        autoplayDisableOnInteraction: false
+    });
 	
 	$('form[ajaxform="true"]').ajaxForm({
         dataType: 'json',
@@ -111,7 +123,7 @@ $(function(){
 				alert('没有填写电话');
 				return false;
 			} else if(!/^1[34578]{1}\d{9}$/i.test(telnumber)) {
-				alert('电话格式不正确(应由11~13位数字组成)');
+				alert('无效的电话号码');
 				return false;
 			}
 			
@@ -150,8 +162,13 @@ $(function(){
 			resp.errno = parseInt(resp.errno);
             if(resp.errno == 0) {//save success
 				$(window).unbind('beforeunload');
+				$('#hits .popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
+					$('#hits.popbox-wrap, .popbox-cover').hide();
+					iScrollTo('lottery');
+				});
 				alert(resp.errmsg);
 				/*是否需要关闭form表单*/
+				$('#hits.popbox-wrap, .popbox-cover').hide();
                 return;
             }
 			alert(resp.errmsg);
@@ -223,47 +240,64 @@ function showResult(award, hited, notryleft) {
 	var award = award || {};
 	var hited = hited || false;
 	var notryleft = notryleft || false;
+	
+	$('.popbox-cover').css({
+		width:Math.max($(window).width(),$(document).width())+'px',
+		height:Math.max($(window).height(),$(document).height())+'px'
+	}).unbind('click');
+	
 	if(hited) {
-		$('.popbox-cover').css({
-			width:Math.max($(window).width(),$(document).width())+'px',
-			height:Math.max($(window).height(),$(document).height())+'px'
-		}).unbind('click').bind('click', function(){
-			$(this).unbind('click').hide();
+		$('.popbox-cover').bind('click', function(){
+			$(this).hide();
 			$('#hited.popbox-wrap, .popbox-cover').hide()
-		});
-		$('#hited.popbox-wrap, .popbox-cover').show();
+		}).show();
+		var position = $('#hited.popbox-wrap').height()>$(window).height() ? 'absolute' : 'fixed';
+		$('#hited.popbox-wrap').css({
+			position: position,
+			left: ($(window).width()-$('#hited.popbox-wrap').width())/2+'px',
+			top: (position=='fixed'?0:$(document).scrollTop())+($(window).height()-$('#hited.popbox-wrap').height())/2+'px'
+		}).show();
 	} else if(notryleft) {
-		$('.popbox-cover').css({
-			width:Math.max($(window).width(),$(document).width())+'px',
-			height:Math.max($(window).height(),$(document).height())+'px'
-		}).unbind('click').bind('click', function(){
-			$(this).unbind('click').hide();
+		$('.popbox-cover').bind('click', function(){
+			$(this).hide();
 			$('#no-tryleft.popbox-wrap, .popbox-cover').hide()
-		});
-		$('#no-tryleft.popbox-wrap, .popbox-cover').show();
+		}).show();
+		var position = $('#no-tryleft.popbox-wrap').height()>$(window).height() ? 'absolute' : 'fixed';
+		$('#no-tryleft.popbox-wrap').css({
+			position: position,
+			left: ($(window).width()-$('#no-tryleft.popbox-wrap').width())/2+'px',
+			top: (position=='fixed'?0:$(document).scrollTop())+($(window).height()-$('#no-tryleft.popbox-wrap').height())/2+'px'
+		}).show();
 	} else if($.isEmptyObject(award)) {
-		$('.popbox-cover').css({
-			width:Math.max($(window).width(),$(document).width())+'px',
-			height:Math.max($(window).height(),$(document).height())+'px'
-		}).unbind('click').bind('click', function(){
-			$(this).unbind('click').hide();
+		$('.popbox-cover').bind('click', function(){
 			$('#not-hits.popbox-wrap, .popbox-cover').hide()
+		}).show();
+		$('#not-hits .popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
+			$('#not-hits.popbox-wrap, .popbox-cover').hide();
+			iScrollTo('lottery');
 		});
-		$('#not-hits.popbox-wrap, .popbox-cover').show();
+		var position = $('#not-hits.popbox-wrap').height()>$(window).height() ? 'absolute' : 'fixed';
+		$('#not-hits.popbox-wrap').css({
+			position: position,
+			left: ($(window).width()-$('#not-hits.popbox-wrap').width())/2+'px',
+			top: (position=='fixed'?0:$(document).scrollTop())+($(window).height()-$('#not-hits.popbox-wrap').height())/2+'px'
+		}).show();
 	} else {/*hits*/
 		$(window).bind('beforeunload',function(){return '尚未提交领奖信息'});
 		$('#hits .popbox-title').html('恭喜抽中'+award.prize_name);
-		$('.popbox-cover').css({
-			width:Math.max($(window).width(),$(document).width())+'px',
-			height:Math.max($(window).height(),$(document).height())+'px'
-		}).unbind('click');
-		$('.popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
+		$('#hits .popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
 			if(window.confirm('尚未提交领奖信息，确认要关闭吗？')) {
 				$('#hits.popbox-wrap, .popbox-cover').hide();
 				iScrollTo('lottery');
 			}
 		});
-		$('#hits.popbox-wrap, .popbox-cover').show();
+		$('.popbox-cover').show();
+		var position = $('#hits.popbox-wrap').height()+180>$(window).height() ? 'absolute' : 'fixed';
+		$('#hits.popbox-wrap').css({
+			position: position,
+			left: ($(window).width()-$('#hits.popbox-wrap').width())/2+'px',
+			top: (position=='fixed'?0:$(document).scrollTop())+($(window).height()-$('#hits.popbox-wrap').height()+180)/2+'px'
+		}).show();
 	}
 }
 
@@ -318,13 +352,50 @@ function lottery(before, after) {
 			roller.run({
 				cycle: 1+Math.floor(Math.random()*(2-1+1)+1),
 				hitpos: hitpos,
-				callback: function() {
-					
-				}
+				callback: function() {showResult({}, false, false)}
 			});
 		},
 		complete: function(){
 			$('#lottery-btn').removeAttr('ajaxing');
 		}
 	});
+}
+function unbindGetCounter() {
+	try{clearTimeout(ajaxPollTimer)}catch(e){}
+}
+var lastid = 0;
+function bindGetCounter() {
+	var ajaxpoll = function() {
+		if(!$('#name-list').attr('name-list')) {
+			$('#name-list').attr('ajaxing', true);
+			ajaxprocess({
+				type: 'post',
+				url: 'ajax/genRewardInfo.php',
+				data: 'dosubmit=true&offset='+lastid,
+				dataType: 'json',
+				success: function(resp) {
+					console.log(resp);
+					if(resp.errno == 0) {
+						var appendhtml = [];
+						$(resp.data).each(function(){
+							lastid = 0;
+							appendhtml.push('<div class="swiper-slide">'+this.user_name+'&nbsp;&nbsp;'+this.user_phone+'&nbsp;&nbsp;恭喜获得'+this.prize_name+'</div>');
+						});
+						$('.name-ul').append(appendhtml);
+						swiper.appendSlide(appendhtml);
+					}
+				},
+				error: function() {
+					console.log('ajaxPoll error');
+				},
+				complete: function() {
+					$('#name-list').removeAttr('ajaxing');
+					ajaxPollTimer = setTimeout(ajaxpoll, retrytime);
+				}
+			});	
+		}
+	}
+	if(ajaxPollTimer === null) {
+		ajaxpoll();
+	}
 }

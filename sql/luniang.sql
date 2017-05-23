@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `luniang_2017_prize`;
 create table `luniang_2017_prize`(
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增id',
   `prize_name` varchar(100) NOT NULL DEFAULT '' COMMENT '奖品名称',
@@ -11,6 +12,7 @@ create table `luniang_2017_prize`(
   KEY `idx_prize_status_type_date`(`status`,`prize_type`,`prize_date`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT '鹿娘奖品表';
 
+DROP TABLE IF EXISTS `luniang_2017_user`;
 create table `luniang_2017_user`(
   `uid` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '用户自增uid',
   `uuid` varchar(100) NOT NULL DEFAULT '' COMMENT '中奖用户唯一的uuid',
@@ -26,6 +28,7 @@ create table `luniang_2017_user`(
   UNIQUE KEY `idx_uuid`(`uuid`)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT '鹿娘用户表';
 
+DROP TABLE IF EXISTS `luniang_2017_log`;
 CREATE TABLE `luniang_2017_log` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `reward_id` int(10) unsigned NOT NULL DEFAULT '0',
