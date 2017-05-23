@@ -8,7 +8,7 @@
 require_once("../config.php");
 require_once(R_ROOT.'/include/class.lottery.php');
 
-$iUserPhone = intval($_POST['telnumber']);
+$iUserPhone = $_POST['telnumber'];
 $sUserName = $_POST['realname'];
 $sUserEmail = $_POST['email'];
 $sUserAddr = $_POST['addr'];
