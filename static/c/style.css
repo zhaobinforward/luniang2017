@@ -122,6 +122,11 @@ img { border:none; }
     vertical-align: middle;
     text-align: center;
 }
+.s-frame-middle>img {
+	max-width: 100%;
+	max-height: 100%;
+	_width: 310px;
+}
 .s-foot {
 	height: 64px;
 	padding: 0 0 0 26px;
@@ -316,10 +321,10 @@ img { border:none; }
 	height: 100%;
 	z-index: 0;
 }
-.swiper-slider {
+.swiper-slider, .noer {
 	text-align: center;
     font-size: 20px;
-    background: #fff;
+    background-color: transparent;
     display: -webkit-box;
     display: -ms-flexbox;
     display: -webkit-flex;

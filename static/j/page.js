@@ -1,5 +1,5 @@
 'use strict';
-var roller,ajaxPollTimer=null,retrytime=30000,swiper;
+var roller,ajaxPollTimer=null,retrytime=3000,swiper;
 $(function(){
 	$(document).on(touchSupport()?'touchstart':'mousedown', '*[clickbtn="true"]', function(){
 		$(this).addClass('clickbtn');
@@ -60,11 +60,13 @@ $(function(){
 			complete: function(){$('.anchor-share-qzone').removeAttr('ajaxing')}
 		});
 	});
-	$('.share-qzone').click(function(){
-		var idx = $('.share-qzone').index(this);
-	});
 	$('.share-weibo').click(function(){
+		share_weibo();
 		var idx = $('.share-weibo').index(this);
+	});
+	$('.share-qzone').click(function(){
+		share_qzone();
+		var idx = $('.share-qzone').index(this);
 	});
 	getInitInfo(function(data){$('.tryleft-info').html('剩余次数：'+data.residue_times+'次')});
 	roller = new iRoller({
@@ -83,16 +85,7 @@ $(function(){
 	
 	bindGetCounter();
 	
-	swiper = new Swiper('.swiper-container', {
-		direction: 'vertical',
-		loop: true,
-        slidesPerView: 5,
-        paginationClickable: true,
-        spaceBetween: 0,
-		centeredSlides: false,
-        autoplay: 1500,
-        autoplayDisableOnInteraction: false
-    });
+	
 	
 	$('form[ajaxform="true"]').ajaxForm({
         dataType: 'json',
@@ -374,14 +367,25 @@ function bindGetCounter() {
 				data: 'dosubmit=true&offset='+lastid,
 				dataType: 'json',
 				success: function(resp) {
-					console.log(resp);
 					if(resp.errno == 0) {
 						var appendhtml = [];
 						$(resp.data).each(function(){
-							lastid = 0;
+							lastid = this.id;
 							appendhtml.push('<div class="swiper-slide">'+this.user_name+'&nbsp;&nbsp;'+this.user_phone+'&nbsp;&nbsp;恭喜获得'+this.prize_name+'</div>');
 						});
-						$('.name-ul').append(appendhtml);
+						if(!swiper) {
+							$('.name-ul').children().remove();
+							swiper = new Swiper('.swiper-container', {
+								direction: 'vertical',
+								loop: true,
+								slidesPerView: 5,
+								paginationClickable: true,
+								spaceBetween: 0,
+								centeredSlides: false,
+								autoplay: 1500,
+								autoplayDisableOnInteraction: false
+							});
+						}
 						swiper.appendSlide(appendhtml);
 					}
 				},
