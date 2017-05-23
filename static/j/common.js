@@ -462,7 +462,7 @@ iRoller.prototype = {
 				roll();
 			}, _self.speeding);
 		}
-		if(_self.options.hitpos < 1) {
+		if(_self.options.hitpos < 0) {
 			return false;
 		}
 		_self.rolling = !0;/*标记为进行中*/
