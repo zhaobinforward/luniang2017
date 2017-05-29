@@ -188,8 +188,10 @@ class Lottery implements LotteryIf{
         if($aResult['num'] == 0 ){
             $sStatus = 5 ;
         }
-        if($this->_isRewarded($sUuid)){//该用户已经中过奖
+        if( $this->isRewarded($sUuid) == 2){//该用户已经填过中过奖信息
             $sStatus = 2;
+        }elseif( $this->isRewarded($sUuid) == 1){//中奖未填中奖信息
+            $sStatus = 1;
         }
         $aRes = array();
         $aData = array();
@@ -374,26 +376,25 @@ class Lottery implements LotteryIf{
         return false;
     }
 
+
     /*
      * 根据uuid确认是否已中过奖
      * @param $sUuid string 用户的唯一uuid
-     * return bool
+     * return int
      * */
-    private function _isRewarded($sUuid){
+    public function isRewarded($sUuid){
         $sSql = "select uid from luniang_2017_user where uuid='".$sUuid."'";
         $oQuery = $this->_MDB->Query($sSql);
         $aRes = $this->_MDB->FetchArray($oQuery);
         if(isset($aRes['uid'])){
-            $sSql = "select count(*) as num from luniang_2017_prize where uuid='".$sUuid."' and status!='0'";
+            $sSql = "select status from luniang_2017_prize where uuid='".$sUuid."'";
             $oQuery = $this->_MDB->Query($sSql);
             $aRes = $this->_MDB->FetchArray($oQuery);
-            if($aRes['num'] == 1){
-                return true;
-            }else{
-                return false;
+            if(isset($aRes['status'])){
+                return $aRes['status'];
             }
         }else{
-            return false;
+            return 0;
         }
     }
 
