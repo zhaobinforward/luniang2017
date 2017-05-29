@@ -41,44 +41,22 @@ class nMysql {
 		$charset = isset($opt['charset'])? $opt['charset']: 'utf8';  // 默认为utf8
 		
 		if(!PRODUCT_MODEL) {
-			$this->m_name     = 'sogou_shoujiwap';
-			$this->m_host     = "127.0.0.1";
+			$this->m_name     = "sogou_shoujiyunying";
+			$this->m_host     = "localhost";
 			$this->m_port     = "3306";
 			$this->m_user     = "root";
 			$this->m_password = "123456";
 			$this->m_charset = $charset;
-		}
-		
-		if (PRODUCT_MODEL && $db=='sogou_shouji') {
-			// mysql -u sogou_shouji -psogou_shouji -h master06.dt.mysql.db.sogou sogou_shouji
-			$this->m_name     = "sogou_shouji"; 
-			$this->m_host     = "master06.dt.mysql.db.sogou"; 
-			$this->m_port     = "3306"; 
-			$this->m_user     = "sogou_shouji"; 
-			$this->m_password = "sogou_shouji"; 
-		} elseif(PRODUCT_MODEL && $db=='sogou_shoujiwap') {
-			// mysql -h mobileime_activity01.dt.mysql.db.sogou -u sogou_shoujiwap -psogou_shoujiwap sogou_shoujiwap
-			$this->m_name     = "sogou_shoujiwap"; 
-			$this->m_host     = "mobileime_activity01.dt.mysql.db.sogou"; 
+		} else {
+			$this->m_name     = "sogou_shoujiyunying";
+			$this->m_host     = "shoujiyunying.minput.rds.sogou";
 			$this->m_port     = "3306";
-			$this->m_user     = "sogou_shoujiwap"; 
-			$this->m_password = "sogou_shoujiwap";
-		} elseif(PRODUCT_MODEL && $db=='skin2'){
-			$this->m_name     = "skin2"; 
-			$this->m_host     = "skin2.ime.rds.sogou"; 
-			$this->m_port     = "3306";
-			$this->m_user     = "ime_skins"; 
-			$this->m_password = "sogou_ime_skins";
-		}else {
-//			$this->m_name     = $db;
-//			$this->m_host     = "10.11.215.202";
-//			$this->m_port     = "3306";
-//			$this->m_user     = "root";
-//			$this->m_password = "123456";
+			$this->m_user     = "shoujiyunying";
+			$this->m_password = "sjyunying2017";
+			$this->m_charset = $charset;
 		}
 
 		$this->m_charset = $charset;
-		
 	}
 	
 	function _initconnection() {

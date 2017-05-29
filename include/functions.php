@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 
 
 /**	设置storage cookie

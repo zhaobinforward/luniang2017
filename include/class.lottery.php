@@ -311,11 +311,13 @@ class Lottery implements LotteryIf{
         if(empty($aPrizes)){
             return array();
         }
-        $sUuids = '(\'';
+        $sUuids = "('";
+		$comma = '';
         foreach($aPrizes as $k=>$v){
-            $sUuids .= $v['uuid'].'\',';
+			$sUuids .= "{$comma}{$v['uuid']}'";
+			$comma = ",'";
         }
-        $sUuids = trim($sUuids,',').")";
+        $sUuids .= ")";
         $sSql = "select * from luniang_2017_user where uuid in ".$sUuids;
         $oQuery = $this->_MDB->Query($sSql);
         $aUidinfo = $this->_MDB->FetchAll($oQuery);
