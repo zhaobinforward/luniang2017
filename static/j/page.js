@@ -524,11 +524,13 @@ function showResult(award, hited, notryleft) {
 		$('#hits .popbox-title').html('<div>\u606d\u559c\u62bd\u4e2d'+award.prize_name+'</div>');/*恭喜抽中*/
 		$('#hits.popbox-wrap .popbox-close').unbind('click').bind('click', function(){
 			if(window.confirm('\u5c1a\u672a\u63d0\u4ea4\u9886\u5956\u4fe1\u606f\uff0c\u786e\u8ba4\u8981\u5173\u95ed\u5417\uff1f')) {/*尚未提交领奖信息，确认要关闭吗？*/
+				$(window).unbind('beforeunload');
 				$('#hits.popbox-wrap, .popbox-cover').hide();
 			}
 		});
 		$('#hits .popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
 			if(window.confirm('\u5c1a\u672a\u63d0\u4ea4\u9886\u5956\u4fe1\u606f\uff0c\u786e\u8ba4\u8981\u5173\u95ed\u5417\uff1f')) {/*尚未提交领奖信息，确认要关闭吗？*/
+				$(window).unbind('beforeunload');
 				$('#hits.popbox-wrap, .popbox-cover').hide();
 				iScrollTo('lottery');
 			}
