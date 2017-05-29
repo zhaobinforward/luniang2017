@@ -405,7 +405,7 @@ iRoller.prototype = {
 		_self.rolling2 = !0;/*标记为进行中*/
 		roll();
 	},
-	stopforever() {/*平滑停止runforever*/
+	stopforever: function() {/*平滑停止runforever*/
 		var _self = this;
 		if(!_self.rolling2) {
 			return;

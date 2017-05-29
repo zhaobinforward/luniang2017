@@ -1,5 +1,5 @@
 'use strict';
-var roller,ajaxPollTimer=null,retrytime=3000,swiper;
+var roller,ajaxPollTimer=null,retrytime=10000,swiper;
 $(function(){
 	$(document).on(touchSupport()?'touchstart':'mousedown', '*[clickbtn="true"]', function(){
 		$(this).addClass('clickbtn');
@@ -19,7 +19,7 @@ $(function(){
 			data: {},
 			dataType: 'json',
 			success: function(resp) {
-				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+				$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
 			},
 			error: function() {console.log('updateLotteryTimes ajax error')},
 			complete: function(){$('.s-download').eq(idx).removeAttr('ajaxing')}
@@ -39,7 +39,7 @@ $(function(){
 			data: {},
 			dataType: 'json',
 			success: function(resp) {
-				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+				$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
 			},
 			error: function() {console.log('updateLotteryTimes ajax error')},
 			complete: function(){$('.share-weibo').eq(idx).removeAttr('ajaxing')}
@@ -59,7 +59,7 @@ $(function(){
 			data: {},
 			dataType: 'json',
 			success: function(resp) {
-				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+				$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
 			},
 			error: function() {console.log('updateLotteryTimes ajax error')},
 			complete: function(){$('.share-qzone').eq(idx).removeAttr('ajaxing')}
@@ -77,7 +77,7 @@ $(function(){
 			data: {},
 			dataType: 'json',
 			success: function(resp) {
-				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+				$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
 			},
 			error: function() {console.log('updateLotteryTimes ajax error')},
 			complete: function(){$('.anchor-share-weibo').removeAttr('ajaxing')}
@@ -95,13 +95,13 @@ $(function(){
 			data: {},
 			dataType: 'json',
 			success: function(resp) {
-				$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+				$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
 			},
 			error: function() {console.log('updateLotteryTimes ajax error')},
 			complete: function(){$('.anchor-share-qzone').removeAttr('ajaxing')}
 		});
 	});
-	getInitInfo(function(data){$('.tryleft-info').html('剩余次数：'+data.residue_times+'次')});
+	getInitInfo(function(data){$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+data.residue_times+'\u6b21')});
 	roller = new iRoller({
 		cycle: 1,
 		hitpos: -1,
@@ -146,7 +146,7 @@ $(function(){
 				realname = '';
 			}
 			if (realname.length < 1) {
-				alert('没有填写姓名');
+				alert('\u6ca1\u6709\u586b\u5199\u59d3\u540d');/*没有填写姓名*/
 				return false;
 			}
 			
@@ -156,10 +156,10 @@ $(function(){
 				telnumber = '';
 			}
 			if(telnumber.length < 1) {
-				alert('没有填写电话');
+				alert('\u6ca1\u6709\u586b\u5199\u7535\u8bdd');/*没有填写电话*/
 				return false;
 			} else if(!/^1[34578]{1}\d{9}$/i.test(telnumber)) {
-				alert('无效的电话号码');
+				alert('\u65e0\u6548\u7684\u7535\u8bdd\u53f7\u7801');/*无效的电话号码*/
 				return false;
 			}
 			
@@ -169,10 +169,10 @@ $(function(){
 				email = '';
 			}
 			if(email.length < 1) {
-				alert('没有填写邮箱');
+				alert('\u6ca1\u6709\u586b\u5199\u90ae\u7bb1');/*没有填写邮箱*/
 				return false;
 			} else if(!isemail(email)) {
-				alert('邮箱格式不正确');
+				alert('\u90ae\u7bb1\u683c\u5f0f\u4e0d\u6b63\u786e');/*邮箱格式不正确*/
 				return false;
 			}
 			
@@ -182,7 +182,7 @@ $(function(){
 				addr = '';
 			}
 			if(addr.length < 1) {
-				alert('没有填写地址');
+				alert('\u6ca1\u6709\u586b\u5199\u5730\u5740');/*没有填写地址*/
 				return false;
 			}
         },
@@ -191,7 +191,7 @@ $(function(){
                 try {
                     resp = JSON.parse(resp);
                 } catch (e) {
-					alert('响应失败');
+					alert('\u54cd\u5e94\u5931\u8d25');/*响应失败*/
                     return;
                 }
             }
@@ -210,12 +210,12 @@ $(function(){
 			alert(resp.errmsg);
         },
         error: function () {
-            alert('响应失败');
+            alert('\u54cd\u5e94\u5931\u8d25');/*响应失败*/
             return;
         },
         complete: function (XMLHttpRequest, status) {
             if(status == 'timeout') {
-				alert('请求超时');
+				alert('\u8bf7\u6c42\u8d85\u65f6');/*请求超时*/
 				return;
             }
         }
@@ -319,10 +319,10 @@ function showResult(award, hited, notryleft) {
 			top: (position=='fixed'?0:$(document).scrollTop())+($(window).height()-$('#not-hits.popbox-wrap').height())/2+'px'
 		}).show();
 	} else {/*hits*/
-		$(window).bind('beforeunload',function(){return '尚未提交领奖信息'});
-		$('#hits .popbox-title').html('恭喜抽中'+award.prize_name);
+		$(window).bind('beforeunload',function(){return '\u5c1a\u672a\u63d0\u4ea4\u9886\u5956\u4fe1\u606f'});/*尚未提交领奖信息*/
+		$('#hits .popbox-title').html('\u606d\u559c\u62bd\u4e2d'+award.prize_name);/*恭喜抽中*/
 		$('#hits .popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
-			if(window.confirm('尚未提交领奖信息，确认要关闭吗？')) {
+			if(window.confirm('\u5c1a\u672a\u63d0\u4ea4\u9886\u5956\u4fe1\u606f\uff0c\u786e\u8ba4\u8981\u5173\u95ed\u5417\uff1f')) {/*尚未提交领奖信息，确认要关闭吗？*/
 				$('#hits.popbox-wrap, .popbox-cover').hide();
 				iScrollTo('lottery');
 			}
@@ -359,7 +359,7 @@ function lottery(before, after) {
 				showResult({}, true, false);
 			} else if(resp.errno == 4 || resp.errno == 3) {/*no-tryleft*/
 				showResult({}, false, true);
-				$('.tryleft-info').html('剩余次数：0次');
+				$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a0\u6b21');
 			} else {/*none*/
 				var hitpos;
 				if(resp.errno == 1) {/*hits*/
@@ -378,7 +378,7 @@ function lottery(before, after) {
 						} else {
 							showResult({}, false, false);
 						}
-						$('.tryleft-info').html('剩余次数：'+resp.data.residue_times+'次');
+						$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
 					}
 				});
 			}
