@@ -42,6 +42,22 @@ interface LotteryIf
      * return array
      * */
     public function genRewardInfo($iOffset);
+
+
+    /*
+    * 根据uuid确认是否已中过奖
+    * @param $sUuid string 用户的唯一uuid
+    * return int
+    * */
+    public function isRewarded($sUuid);
+
+    /*
+    * 根据uuid查询中奖相应字段值
+    * @param $sUid string uid
+    * @param $sFeild string 字段名
+    * return mixed
+    * */
+    public function getPrizeInfoByUid($sUid, $sFeild);
 }
 
 class Lottery implements LotteryIf{
@@ -389,11 +405,12 @@ class Lottery implements LotteryIf{
         if(isset($aRes['uid'])){
             $sSql = "select status from luniang_2017_prize where uuid='".$sUuid."'";
             $oQuery = $this->_MDB->Query($sSql);
-            if($aRes = $this->_MDB->FetchArray($oQuery)) {
-				return $aRes['status'];
-			} else {
-				return 0;
-			}
+            $aRes = $this->_MDB->FetchArray($oQuery);
+            if($aRes){
+                return $aRes['status'];
+            }else{
+                return 0;
+            }
         }else{
             return 0;
         }
@@ -446,6 +463,24 @@ class Lottery implements LotteryIf{
         }
         return $aRes;
 
+    }
+
+
+    /*
+     * 根据uuid查询中奖相应字段值
+     * @param $sUid string uid
+     * @param $sFeild string 字段名
+     * return mixed
+     * */
+    public function getPrizeInfoByUid($sUid, $sFeild){
+        $sSql = "select ".$sFeild." from luniang_2017_prize where uuid='".$sUid."'";
+        $oQuery = $this->_MDB->Query($sSql);
+        $aRes = $this->_MDB->FetchArray($oQuery);
+        if($aRes[$sFeild]){
+            return $aRes[$sFeild];
+        }else{
+            return '';
+        }
     }
 
 }
