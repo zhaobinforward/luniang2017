@@ -1,5 +1,5 @@
 'use strict';
-var roller,ajaxPollTimer=null,retrytime=10000,swiper;
+var roller,ajaxPollTimer=null,retrytime=10000,swiper,user={};
 $(function(){
 	$(document).on(touchSupport()?'touchstart':'mousedown', '*[clickbtn="true"]', function(){
 		$(this).addClass('clickbtn');
@@ -26,8 +26,9 @@ $(function(){
 		});
 	});
 	$('.share-weibo').click(function(){
-		share_weibo();
 		var idx = $('.share-weibo').index(this);
+		dataForShareTmp = $.extend(dataForShareTmp, skins_share[idx]);
+		share_weibo();
 		try{MtaH5.clickStat(71+idx)}catch(e){}
 		if($('.share-weibo').eq(idx).attr('ajaxing')) {
 			return;
@@ -46,8 +47,9 @@ $(function(){
 		});
 	});
 	$('.share-qzone').click(function(){
-		share_qzone();
 		var idx = $('.share-qzone').index(this);
+		dataForQzoneShareTmp = $.extend(dataForQzoneShareTmp, skins_share[idx]);
+		share_qzone();
 		try{MtaH5.clickStat(91+idx)}catch(e){}
 		if($('.share-qzone').eq(idx).attr('ajaxing')) {
 			return;
@@ -66,6 +68,7 @@ $(function(){
 		});
 	});
 	$('.anchor-share-weibo').click(function(){
+		dataForShareTmp = $.extend(dataForShareTmp, dataForShare);
 		share_weibo();
 		if($('.anchor-share-weibo').attr('ajaxing')) {
 			return;
@@ -101,7 +104,15 @@ $(function(){
 			complete: function(){$('.anchor-share-qzone').removeAttr('ajaxing')}
 		});
 	});
-	getInitInfo(function(data){$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+data.residue_times+'\u6b21')});
+	getInitInfo(function(data){
+		user.status = data.status;
+		user.prize_name = data.status;
+		if(data.status == 0) {
+			$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+data.residue_times+'\u6b21');
+		} else {
+			$('.tryleft-info').html('\u60a8\u5df2\u4e2d\u5956\u3002');/*您已中奖。*/
+		}
+	});
 	roller = new iRoller({
 		cycle: 1,
 		hitpos: -1,
@@ -222,6 +233,94 @@ $(function(){
     });
 });
 
+var _stitle = '\u6709\u4e00\u4efd\u513f\u7ae5\u8282\u793c\u7269\u5f85\u9886\u53d6\uff01';
+var skins_share = [
+	{
+		title:_stitle,
+		/*这么精美的皮肤，不推不给力啊~【嗜谎之神 - 皮肤下载 - 搜狗拼音输入法】*/
+		content:'\u8fd9\u4e48\u7cbe\u7f8e\u7684\u76ae\u80a4\uff0c\u4e0d\u63a8\u4e0d\u7ed9\u529b\u554a\u007e\u3010\u55dc\u8c0e\u4e4b\u795e\u0020\u002d\u0020\u76ae\u80a4\u4e0b\u8f7d\u0020\u002d\u0020\u641c\u72d7\u62fc\u97f3\u8f93\u5165\u6cd5\u3011',
+		imgurl:'https://imedl.sogoucdn.com/cache/skins/uploadImage/2017/05/22/14954593939682_former.jpg',
+		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561735?f=luniang2017'
+	},
+	{
+		title:_stitle,
+		/*这款皮肤太给力了，推荐大家使用~O(∩_∩)O~ 【中国怪谈（动态）- 皮肤下载 - 搜狗拼音输入法】*/
+		content:'\u8fd9\u6b3e\u76ae\u80a4\u592a\u7ed9\u529b\u4e86\uff0c\u63a8\u8350\u5927\u5bb6\u4f7f\u7528\u007e\u004f\u0028\u2229\u005f\u2229\u0029\u004f\u007e\u0020\u3010\u4e2d\u56fd\u602a\u8c08\uff08\u52a8\u6001\uff09\u002d\u0020\u76ae\u80a4\u4e0b\u8f7d\u0020\u002d\u0020\u641c\u72d7\u62fc\u97f3\u8f93\u5165\u6cd5\u3011',
+		imgurl:'https://imedl.sogoucdn.com/cache/skins/uploadImage/2017/05/22/14954598392117_former.gif',
+		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561741?f=luniang2017'
+	},
+	{
+		title:_stitle,
+		/*换了一款不错的搜狗皮肤，大家试试 【青蛙王子快走开 - 皮肤下载 - 搜狗拼音输入法】*/
+		content:'\u6362\u4e86\u4e00\u6b3e\u4e0d\u9519\u7684\u641c\u72d7\u76ae\u80a4\uff0c\u5927\u5bb6\u8bd5\u8bd5\u0020\u3010\u9752\u86d9\u738b\u5b50\u5feb\u8d70\u5f00\u0020\u002d\u0020\u76ae\u80a4\u4e0b\u8f7d\u0020\u002d\u0020\u641c\u72d7\u62fc\u97f3\u8f93\u5165\u6cd5\u3011',
+		imgurl:'https://imedl.sogoucdn.com/cache/skins/uploadImage/2017/05/22/14954568709235_former.jpg',
+		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561731?f=luniang2017'
+	},
+	{
+		title:_stitle,
+		/*好喜欢这款皮肤，都来下载吧 【女友？日后再说 - 皮肤下载 - 搜狗拼音输入法】*/
+		content:'\u597d\u559c\u6b22\u8fd9\u6b3e\u76ae\u80a4\uff0c\u90fd\u6765\u4e0b\u8f7d\u5427\u0020\u3010\u5973\u53cb\uff1f\u65e5\u540e\u518d\u8bf4\u0020\u002d\u0020\u76ae\u80a4\u4e0b\u8f7d\u0020\u002d\u0020\u641c\u72d7\u62fc\u97f3\u8f93\u5165\u6cd5\u3011',
+		imgurl:'https://imedl.sogoucdn.com/cache/skins/uploadImage/2017/05/22/14954556016459_former.jpg',
+		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561729?f=luniang2017'
+	},
+	{
+		title:_stitle,
+		/*分享一款漂亮的搜狗皮肤~  【仙世录（动态 - 皮肤下载 - 搜狗拼音输入法】*/
+		content:'\u5206\u4eab\u4e00\u6b3e\u6f02\u4eae\u7684\u641c\u72d7\u76ae\u80a4\u007e\u0020\u0020\u3010\u4ed9\u4e16\u5f55\uff08\u52a8\u6001\u0020\u002d\u0020\u76ae\u80a4\u4e0b\u8f7d\u0020\u002d\u0020\u641c\u72d7\u62fc\u97f3\u8f93\u5165\u6cd5\u3011',
+		imgurl:'https://imedl.sogoucdn.com/cache/skins/uploadImage/2017/05/22/14954596341891_former.gif',
+		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561739?f=luniang2017'
+	},
+	{
+		title:_stitle,
+		/*分享一款漂亮的搜狗皮肤~ 【断袖皇上别碰我 - 皮肤下载 - 搜狗拼音输入法】*/
+		content:'\u5206\u4eab\u4e00\u6b3e\u6f02\u4eae\u7684\u641c\u72d7\u76ae\u80a4\u007e\u0020\u3010\u65ad\u8896\u7687\u4e0a\u522b\u78b0\u6211\u0020\u002d\u0020\u76ae\u80a4\u4e0b\u8f7d\u0020\u002d\u0020\u641c\u72d7\u62fc\u97f3\u8f93\u5165\u6cd5\u3011',
+		imgurl:'https://imedl.sogoucdn.com/cache/skins/uploadImage/2017/05/22/14954541935660_former.jpg',
+		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561717?f=luniang2017'
+	},
+	{
+		title:_stitle,
+		/*好喜欢这款皮肤，都来下载吧 【进化萌宠 - 皮肤下载 - 搜狗拼音输入法】*/
+		content:'\u597d\u559c\u6b22\u8fd9\u6b3e\u76ae\u80a4\uff0c\u90fd\u6765\u4e0b\u8f7d\u5427\u0020\u3010\u8fdb\u5316\u840c\u5ba0\u0020\u002d\u0020\u76ae\u80a4\u4e0b\u8f7d\u0020\u002d\u0020\u641c\u72d7\u62fc\u97f3\u8f93\u5165\u6cd5\u3011',
+		imgurl:'https://imedl.sogoucdn.com/cache/skins/uploadImage/2017/05/22/14954544759496_former.jpg',
+		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561719?f=luniang2017'
+	},
+	{
+		title:_stitle,
+		/*这款皮肤太给力了，推荐大家使用~O(∩_∩)O~ 【女生请止步 - 皮肤下载 - 搜狗拼音输入法】*/
+		content:'\u8fd9\u6b3e\u76ae\u80a4\u592a\u7ed9\u529b\u4e86\uff0c\u63a8\u8350\u5927\u5bb6\u4f7f\u7528\u007e\u004f\u0028\u2229\u005f\u2229\u0029\u004f\u007e\u0020\u3010\u5973\u751f\u8bf7\u6b62\u6b65\u0020\u002d\u0020\u76ae\u80a4\u4e0b\u8f7d\u0020\u002d\u0020\u641c\u72d7\u62fc\u97f3\u8f93\u5165\u6cd5\u3011',
+		imgurl:'https://imedl.sogoucdn.com/cache/skins/uploadImage/2017/05/22/14954554007877_former.jpg',
+		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561727?f=luniang2017'
+	},
+	{
+		title:_stitle,
+		/*这么精美的皮肤，不推不给力啊~【尸界 - 皮肤下载 - 搜狗拼音输入法】*/
+		content:'\u8fd9\u4e48\u7cbe\u7f8e\u7684\u76ae\u80a4\uff0c\u4e0d\u63a8\u4e0d\u7ed9\u529b\u554a\u007e\u3010\u5c38\u754c\u0020\u002d\u0020\u76ae\u80a4\u4e0b\u8f7d\u0020\u002d\u0020\u641c\u72d7\u62fc\u97f3\u8f93\u5165\u6cd5\u3011',
+		imgurl:'https://imedl.sogoucdn.com/cache/skins/uploadImage/2017/05/22/14954592057723_former.jpg',
+		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561733?f=luniang2017'
+	},
+	{
+		title:_stitle,
+		/*这么精美的皮肤，不推不给力啊~【我的食人女友 - 皮肤下载 - 搜狗拼音输入法】*/
+		content:'\u8fd9\u4e48\u7cbe\u7f8e\u7684\u76ae\u80a4\uff0c\u4e0d\u63a8\u4e0d\u7ed9\u529b\u554a\u007e\u3010\u6211\u7684\u98df\u4eba\u5973\u53cb\u0020\u002d\u0020\u76ae\u80a4\u4e0b\u8f7d\u0020\u002d\u0020\u641c\u72d7\u62fc\u97f3\u8f93\u5165\u6cd5\u3011',
+		imgurl:'https://imedl.sogoucdn.com/cache/skins/uploadImage/2017/05/22/14954595354714_former.jpg',
+		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561737?f=luniang2017'
+	},
+	{
+		title:_stitle,
+		/*这款皮肤太给力了，推荐大家使用~O(∩_∩)O~ 【妹力无穷 - 皮肤下载 - 搜狗拼音输入法】*/
+		content:'\u8fd9\u6b3e\u76ae\u80a4\u592a\u7ed9\u529b\u4e86\uff0c\u63a8\u8350\u5927\u5bb6\u4f7f\u7528\u007e\u004f\u0028\u2229\u005f\u2229\u0029\u004f\u007e\u0020\u3010\u59b9\u529b\u65e0\u7a77\u0020\u002d\u0020\u76ae\u80a4\u4e0b\u8f7d\u0020\u002d\u0020\u641c\u72d7\u62fc\u97f3\u8f93\u5165\u6cd5\u3011',
+		imgurl:'https://imedl.sogoucdn.com/cache/skins/uploadImage/2017/05/22/14954549071600_former.jpg',
+		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561725?f=luniang2017'
+	},
+	{
+		title:_stitle,
+		/*这款皮肤太给力了，推荐大家使用~O(∩_∩)O~ 【草莓狂战记 - 皮肤下载 - 搜狗拼音输入法】*/
+		content:'\u8fd9\u6b3e\u76ae\u80a4\u592a\u7ed9\u529b\u4e86\uff0c\u63a8\u8350\u5927\u5bb6\u4f7f\u7528\u007e\u004f\u0028\u2229\u005f\u2229\u0029\u004f\u007e\u0020\u3010\u8349\u8393\u72c2\u6218\u8bb0\u0020\u002d\u0020\u76ae\u80a4\u4e0b\u8f7d\u0020\u002d\u0020\u641c\u72d7\u62fc\u97f3\u8f93\u5165\u6cd5\u3011',
+		imgurl:'https://imedl.sogoucdn.com/cache/skins/uploadImage/2017/05/22/14954435615345_former.jpg',
+		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561713?f=luniang2017'
+	},
+];
+
 function getInitInfo(call) {
 	var call = typeof call == 'function' ? call : function(){};
 	ajaxprocess({
@@ -320,7 +419,7 @@ function showResult(award, hited, notryleft) {
 		}).show();
 	} else {/*hits*/
 		$(window).bind('beforeunload',function(){return '\u5c1a\u672a\u63d0\u4ea4\u9886\u5956\u4fe1\u606f'});/*尚未提交领奖信息*/
-		$('#hits .popbox-title').html('\u606d\u559c\u62bd\u4e2d'+award.prize_name);/*恭喜抽中*/
+		$('#hits .popbox-title').html('<div>\u606d\u559c\u62bd\u4e2d'+award.prize_name+'</div>');/*恭喜抽中*/
 		$('#hits .popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
 			if(window.confirm('\u5c1a\u672a\u63d0\u4ea4\u9886\u5956\u4fe1\u606f\uff0c\u786e\u8ba4\u8981\u5173\u95ed\u5417\uff1f')) {/*尚未提交领奖信息，确认要关闭吗？*/
 				$('#hits.popbox-wrap, .popbox-cover').hide();

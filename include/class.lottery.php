@@ -389,10 +389,11 @@ class Lottery implements LotteryIf{
         if(isset($aRes['uid'])){
             $sSql = "select status from luniang_2017_prize where uuid='".$sUuid."'";
             $oQuery = $this->_MDB->Query($sSql);
-            $aRes = $this->_MDB->FetchArray($oQuery);
-            if(isset($aRes['status'])){
-                return $aRes['status'];
-            }
+            if($aRes = $this->_MDB->FetchArray($oQuery)) {
+				return $aRes['status'];
+			} else {
+				return 0;
+			}
         }else{
             return 0;
         }
