@@ -228,7 +228,7 @@
 				<span class="roller-frame"></span>
 			</div>
 			<div class="roller roller-10" ord="10" atype="0">
-				<div class="roller-inner"><img src="static/i/award-thanks.png" /></div>
+				<div class="roller-inner"><img src="static/i/award-thanks2.png" /></div>
 				<span class="roller-frame"></span>
 			</div>
 			<a id="lottery-btn" class="lottert-btn" href="javascript:;" clickbtn="true"><span class="lottert-btn-inner ani"></span></a>
@@ -245,6 +245,7 @@
 			</div>
 		</div>
 		<div class="name-list-title"></div>
+		<div class="logo-combine"></div>
 	</div><!--//.name-cont-->
 </div><!--//.page-wrapper-->
 <div class="sidebar-wrap">
@@ -266,39 +267,42 @@
 		<div class="popbox-cont-inner">
 			<div class="popbox-btn-wrap">
 				<a href="javascript:iScrollTo('download');$('#no-tryleft,.popbox-cover').hide();try{MtaH5.clickStat('43')}catch(e){}" class="popbox-btn popbox-btn-download" style="margin-right:4px"></a>
-				<a href="javascript:share_weibo();try{MtaH5.clickStat('44')}catch(e){}" class="popbox-btn popbox-btn-share-weibo" style="margin:0 4px 0"></a>
-				<a href="javascript:share_qzone();try{MtaH5.clickStat('45')}catch(e){}" class="popbox-btn popbox-btn-share-qzone" style="margin-left:4px"></a>
+				<a id="no-tryleft-share-weibo-btn" href="javascript:;" class="popbox-btn popbox-btn-share-weibo" style="margin:0 4px 0"></a>
+				<a id="no-tryleft-share-qzone-btn" href="javascript:" class="popbox-btn popbox-btn-share-qzone" style="margin-left:4px"></a>
 			</div>
 		</div>
 	</div>
+	<a class="popbox-close">&nbsp;</a>
 </div>
 <div class="popbox-wrap" id="hits" style="overflow:visible;display:none">
 	<img src="static/i/popbox-bubble.png" class="popbox-bg" />
 	<div class="popbox-cont">
 		<div class="popbox-cont-inner">
-			<div class="popbox-title"></div>
+			<div class="popbox-title" style="margin-top:64px"></div>
 			<form ajaxform="true" action="ajax/congratulation.php" method="post">
-				<div class="fieldtr" style="margin-top:150px"><input class="input-name" type="text" name="realname" /></div>
+				<div class="fieldtr" style="margin-top:152px"><input class="input-name" type="text" name="realname" /></div>
 				<div class="fieldtr"><input class="input-tel" type="text" name="telnumber" value="" /></div>
 				<div class="fieldtr"><input class="input-email" type="text" name="email" value="" /></div>
 				<div class="fieldtr"><input class="input-addr" type="text" name="addr" value="" /></div>
-				<div class="popbox-btn-wrap" style="margin:44px auto 0;">
+				<div class="popbox-btn-wrap" style="margin:36px auto 0;">
 					<button onclick="javascript:try{MtaH5.clickStat('46')}catch(e){}" type="submit" class="popbox-btn popbox-btn-save" style="margin-right:22px"></button>
 					<button onclick="javascript:try{MtaH5.clickStat('47')}catch(e){}" type="button" class="popbox-btn popbox-btn-tryagain" style="margin-left:22px"></button>
 				</div>
 			</form>
 		</div>
 	</div>
+	<a class="popbox-close">&nbsp;</a>
 </div>
 <div class="popbox-wrap" id="hited" style="display:none">
 	<div class="popbox-cont">
 		<div class="popbox-cont-inner">
 			<div class="popbox-btn-wrap">
-				<a href="javascript:share_weibo();try{MtaH5.clickStat('41')}catch(e){}" class="popbox-btn popbox-btn-share-weibo" style="margin-right:4px"></a>
-				<a href="javascript:share_qzone();try{MtaH5.clickStat('42')}catch(e){}" class="popbox-btn popbox-btn-share-qzone" style="margin-left:4px"></a>
+				<a id="hited-share-weibo-btn" href="javascript:;" class="popbox-btn popbox-btn-share-weibo" style="margin-right:4px"></a>
+				<a id="hited-share-qzone-btn" href="javascript:;" class="popbox-btn popbox-btn-share-qzone" style="margin-left:4px"></a>
 			</div>
 		</div>
 	</div>
+	<a class="popbox-close">&nbsp;</a>
 </div>
 <div class="popbox-wrap" id="not-hits" style="display:none">
 	<div class="popbox-cont">
@@ -308,6 +312,7 @@
 			</div>
 		</div>
 	</div>
+	<a class="popbox-close">&nbsp;</a>
 </div>
 <!--maskshare微信-->
 <div class="mask_share"><img src="static/i/mask_share.png" class="mask_shareimg"/></div>
@@ -319,8 +324,8 @@
 <script type="text/javascript" src="static/j/jquery.SuperSlide.2.1.1.js"></script>
 <script type="text/javascript" src="static/j/swiper.min.js"></script>
 <script type="text/javascript" src="static/j/common.js"></script>
-<script type="text/javascript" src="static/j/page.js"></script>
 <script type="text/javascript" src="static/j/share.js"></script>
+<script type="text/javascript" src="static/j/page.js"></script>
 <script type="text/javascript" src="data/skins.js"></script>
 <script type="text/javascript" src="data/awards.js"></script>
 <script type="text/javascript">

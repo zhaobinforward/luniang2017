@@ -75,6 +75,6 @@ function product_model() {
 	if($_SERVER['HTTP_HOST'] == '127.0.0.1' || $_SERVER['HTTP_HOST'] == 'localhost' || $_SERVER['HTTP_HOST'] == '192.168.1.100') {
 		return false;
 	}
-	return false;
+	return true;
 }
 ?>

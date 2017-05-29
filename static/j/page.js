@@ -19,7 +19,7 @@ $(function(){
 			data: {},
 			dataType: 'json',
 			success: function(resp) {
-				$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
+				user.status==0&&$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
 			},
 			error: function() {console.log('updateLotteryTimes ajax error')},
 			complete: function(){$('.s-download').eq(idx).removeAttr('ajaxing')}
@@ -40,7 +40,7 @@ $(function(){
 			data: {},
 			dataType: 'json',
 			success: function(resp) {
-				$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
+				user.status==0&&$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
 			},
 			error: function() {console.log('updateLotteryTimes ajax error')},
 			complete: function(){$('.share-weibo').eq(idx).removeAttr('ajaxing')}
@@ -61,10 +61,86 @@ $(function(){
 			data: {},
 			dataType: 'json',
 			success: function(resp) {
-				$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
+				user.status==0&&$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
 			},
 			error: function() {console.log('updateLotteryTimes ajax error')},
 			complete: function(){$('.share-qzone').eq(idx).removeAttr('ajaxing')}
+		});
+	});
+	$('#hited-share-weibo-btn').click(function(){
+		try{MtaH5.clickStat('41')}catch(e){}
+		share_weibo();
+		if($('.hited-share-weibo-btn').attr('ajaxing')) {
+			return;
+		}
+		$('.hited-share-weibo-btn').attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				user.status==0&&$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.hited-share-weibo-btn').removeAttr('ajaxing')}
+		});
+	});
+	$('#hited-share-qzone-btn').click(function(){
+		try{MtaH5.clickStat('42')}catch(e){}
+		share_qzone();
+		if($('.hited-share-qzone-btn').attr('ajaxing')) {
+			return;
+		}
+		$('.hited-share-qzone-btn').attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				user.status==0&&$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.hited-share-qzone-btn').removeAttr('ajaxing')}
+		});
+	});
+	$('#no-tryleft-share-weibo-btn').click(function(){
+		try{MtaH5.clickStat('44')}catch(e){};
+		share_weibo();
+		if($('.no-tryleft-share-weibo-btn').attr('ajaxing')) {
+			return;
+		}
+		$('.no-tryleft-share-weibo-btn').attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				user.status==0&&$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.no-tryleft-share-weibo-btn').removeAttr('ajaxing')}
+		});
+	});
+	$('#no-tryleft-share-qzone-btn').click(function(){
+		try{MtaH5.clickStat('45')}catch(e){};
+		share_qzone();
+		if($('.no-tryleft-share-qzone-btn').attr('ajaxing')) {
+			return;
+		}
+		$('.no-tryleft-share-qzone-btn').attr('ajaxing', true);
+		ajaxprocess({
+			type: 'post',
+			url: 'ajax/updateLotteryTimes.php',
+			data: {},
+			dataType: 'json',
+			success: function(resp) {
+				user.status==0&&$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
+			},
+			error: function() {console.log('updateLotteryTimes ajax error')},
+			complete: function(){$('.no-tryleft-share-qzone-btn').removeAttr('ajaxing')}
 		});
 	});
 	$('.anchor-share-weibo').click(function(){
@@ -80,7 +156,7 @@ $(function(){
 			data: {},
 			dataType: 'json',
 			success: function(resp) {
-				$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
+				user.status==0&&$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
 			},
 			error: function() {console.log('updateLotteryTimes ajax error')},
 			complete: function(){$('.anchor-share-weibo').removeAttr('ajaxing')}
@@ -98,7 +174,7 @@ $(function(){
 			data: {},
 			dataType: 'json',
 			success: function(resp) {
-				$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
+				user.status==0&&$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
 			},
 			error: function() {console.log('updateLotteryTimes ajax error')},
 			complete: function(){$('.anchor-share-qzone').removeAttr('ajaxing')}
@@ -106,10 +182,13 @@ $(function(){
 	});
 	getInitInfo(function(data){
 		user.status = data.status;
-		user.prize_name = data.status;
+		user.prize_name = data.prize_name;
 		if(data.status == 0) {
 			$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+data.residue_times+'\u6b21');
 		} else {
+			dataForShareTmp = $.extend(dataForShareTmp, hits_share_weibo);
+//console.log(hits_share_weibo,dataForShareTmp);
+			dataForQzoneShareTmp = $.extend(dataForQzoneShareTmp, hits_share_qzone);
 			$('.tryleft-info').html('\u60a8\u5df2\u4e2d\u5956\u3002');/*您已中奖。*/
 		}
 	});
@@ -208,6 +287,9 @@ $(function(){
             }
 			resp.errno = parseInt(resp.errno);
             if(resp.errno == 0) {//save success
+				user.status=2;
+				unBindGetCounter();
+				bindGetCounter();
 				$(window).unbind('beforeunload');
 				$('#hits .popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
 					$('#hits.popbox-wrap, .popbox-cover').hide();
@@ -233,6 +315,7 @@ $(function(){
     });
 });
 
+/*有一份儿童节礼物待领取！*/
 var _stitle = '\u6709\u4e00\u4efd\u513f\u7ae5\u8282\u793c\u7269\u5f85\u9886\u53d6\uff01';
 var skins_share = [
 	{
@@ -320,7 +403,17 @@ var skins_share = [
 		contenturl:'http://pinyin.sogou.com/skins/detail/view/info/561713?f=luniang2017'
 	},
 ];
-
+var hits_share_weibo = {
+	title: '',
+	/*#有一份儿童节礼物待领取# 啦啦啦~我刚刚抽中了一份儿童节礼物哟！每天共有12次抽奖机会，快来试试你能抽中什么吧！@搜狗输入法*/
+    content: '\u0023\u6709\u4e00\u4efd\u513f\u7ae5\u8282\u793c\u7269\u5f85\u9886\u53d6\u0023 \u5566\u5566\u5566\u007e\u6211\u521a\u521a\u62bd\u4e2d\u4e86\u4e00\u4efd\u513f\u7ae5\u8282\u793c\u7269\u54df\uff01\u6bcf\u5929\u5171\u6709\u0031\u0032\u6b21\u62bd\u5956\u673a\u4f1a\uff0c\u5feb\u6765\u8bd5\u8bd5\u4f60\u80fd\u62bd\u4e2d\u4ec0\u4e48\u5427\uff01\u0040\u641c\u72d7\u8f93\u5165\u6cd5'
+}
+var hits_share_qzone = {
+	/*有一份儿童节礼物待领取！*/
+	title: '\u6709\u4e00\u4efd\u513f\u7ae5\u8282\u793c\u7269\u5f85\u9886\u53d6\uff01',
+	/*啦啦啦~我刚刚抽中了一份儿童节礼物哟！每天共有12次抽奖机会，快来试试你能抽中什么吧！*/
+    content: '\u5566\u5566\u5566\u007e\u6211\u521a\u521a\u62bd\u4e2d\u4e86\u4e00\u4efd\u513f\u7ae5\u8282\u793c\u7269\u54df\uff01\u6bcf\u5929\u5171\u6709\u0031\u0032\u6b21\u62bd\u5956\u673a\u4f1a\uff0c\u5feb\u6765\u8bd5\u8bd5\u4f60\u80fd\u62bd\u4e2d\u4ec0\u4e48\u5427\uff01'
+}
 function getInitInfo(call) {
 	var call = typeof call == 'function' ? call : function(){};
 	ajaxprocess({
@@ -344,9 +437,9 @@ function iScrollTo(anchor, timeout) {
 	var offsetY = 0;
 	switch(anchor) {
 		case 'download':
-			offsetY = $('.main-cont').offset().top;break;
+			offsetY = $('.main-cont').offset().top-60;break;
 		case 'lottery':
-			offsetY = $('.lottery-cont').offset().top;break;
+			offsetY = $('.lottery-cont').offset().top-80;break;
 		default :
 		offsetY = $('.main-cont').offset().top;
 	}
@@ -384,8 +477,11 @@ function showResult(award, hited, notryleft) {
 	if(hited) {
 		$('.popbox-cover').bind('click', function(){
 			$(this).hide();
-			$('#hited.popbox-wrap, .popbox-cover').hide()
+			$('#hited.popbox-wrap, .popbox-cover').hide();
 		}).show();
+		$('#hited.popbox-wrap .popbox-close').unbind('click').bind('click', function(){
+			$('#hited.popbox-wrap, .popbox-cover').hide();
+		});
 		var position = $('#hited.popbox-wrap').height()>$(window).height() ? 'absolute' : 'fixed';
 		$('#hited.popbox-wrap').css({
 			position: position,
@@ -395,8 +491,11 @@ function showResult(award, hited, notryleft) {
 	} else if(notryleft) {
 		$('.popbox-cover').bind('click', function(){
 			$(this).hide();
-			$('#no-tryleft.popbox-wrap, .popbox-cover').hide()
+			$('#no-tryleft.popbox-wrap, .popbox-cover').hide();
 		}).show();
+		$('#no-tryleft.popbox-wrap .popbox-close').unbind('click').bind('click', function(){
+			$('#no-tryleft.popbox-wrap, .popbox-cover').hide();
+		});
 		var position = $('#no-tryleft.popbox-wrap').height()>$(window).height() ? 'absolute' : 'fixed';
 		$('#no-tryleft.popbox-wrap').css({
 			position: position,
@@ -407,6 +506,9 @@ function showResult(award, hited, notryleft) {
 		$('.popbox-cover').bind('click', function(){
 			$('#not-hits.popbox-wrap, .popbox-cover').hide()
 		}).show();
+		$('#not-hits.popbox-wrap .popbox-close').unbind('click').bind('click', function(){
+			$('#not-hits.popbox-wrap, .popbox-cover').hide();
+		});
 		$('#not-hits .popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
 			$('#not-hits.popbox-wrap, .popbox-cover').hide();
 			iScrollTo('lottery');
@@ -420,6 +522,11 @@ function showResult(award, hited, notryleft) {
 	} else {/*hits*/
 		$(window).bind('beforeunload',function(){return '\u5c1a\u672a\u63d0\u4ea4\u9886\u5956\u4fe1\u606f'});/*尚未提交领奖信息*/
 		$('#hits .popbox-title').html('<div>\u606d\u559c\u62bd\u4e2d'+award.prize_name+'</div>');/*恭喜抽中*/
+		$('#hits.popbox-wrap .popbox-close').unbind('click').bind('click', function(){
+			if(window.confirm('\u5c1a\u672a\u63d0\u4ea4\u9886\u5956\u4fe1\u606f\uff0c\u786e\u8ba4\u8981\u5173\u95ed\u5417\uff1f')) {/*尚未提交领奖信息，确认要关闭吗？*/
+				$('#hits.popbox-wrap, .popbox-cover').hide();
+			}
+		});
 		$('#hits .popbox-btn.popbox-btn-tryagain').unbind('click').bind('click', function(){
 			if(window.confirm('\u5c1a\u672a\u63d0\u4ea4\u9886\u5956\u4fe1\u606f\uff0c\u786e\u8ba4\u8981\u5173\u95ed\u5417\uff1f')) {/*尚未提交领奖信息，确认要关闭吗？*/
 				$('#hits.popbox-wrap, .popbox-cover').hide();
@@ -439,6 +546,13 @@ function showResult(award, hited, notryleft) {
 function lottery(before, after) {
 	var before = typeof before == 'function' ? before : function(){};
 	var after = typeof after == 'function' ? after : function(){};
+	if(user.status == 1) {
+		showResult({prize_name:user.prize_name}, false, false);
+		return;
+	} else if(user.status == 2) {
+		showResult({}, true, false);
+		return;
+	}
 	if(roller.rolling) {
 		return;
 	}
@@ -477,7 +591,15 @@ function lottery(before, after) {
 						} else {
 							showResult({}, false, false);
 						}
-						$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
+						if(resp.errno == 1) {
+							user.status = 1;
+							user.prize_name = resp.data.prize_name;
+							$('.tryleft-info').html('\u60a8\u5df2\u4e2d\u5956\u3002');/*您已中奖。*/
+							dataForShareTmp = $.extend(dataForShareTmp, hits_share_weibo);
+							dataForQzoneShareTmp = $.extend(dataForQzoneShareTmp, hits_share_qzone);
+						} else {
+							$('.tryleft-info').html('\u5269\u4f59\u6b21\u6570\uff1a'+resp.data.residue_times+'\u6b21');
+						}
 					}
 				});
 			}
@@ -515,7 +637,7 @@ function bindGetCounter() {
 						var appendhtml = [];
 						$(resp.data).each(function(){
 							lastid = this.id;
-							appendhtml.push('<div class="swiper-slide">'+this.user_name+'&nbsp;&nbsp;'+this.user_phone+'&nbsp;&nbsp;恭喜获得'+this.prize_name+'</div>');
+							appendhtml.push('<div class="swiper-slide cutstr">'+this.user_name+'&nbsp;&nbsp;'+this.user_phone+'&nbsp;&nbsp;恭喜获得'+this.prize_name+'</div>');
 						});
 						if(!swiper) {
 							$('.name-ul').children().remove();
